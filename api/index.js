@@ -25,7 +25,7 @@ const columnsMap = {
 
 router.get('/properties', cors(), async (req, res, next) => {
   try {
-    const result = await db.queryPromise('select * from property;');
+    const result = await db.queryPromise('select * from `property`;');
     res.json(result);
   } catch (err) {
     return next(err);
@@ -49,7 +49,7 @@ router.post('/contribute', async (req, res, next) => {
     return columns.map((column) => get(item, columnsMap[column]));
   });
 
-  const sql = `replace into \`property\` (${columns}) values ?`;
+  const sql = `replace into \`property\` (${columns}) values ?;`;
   const params = [data];
 
   try {
