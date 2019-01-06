@@ -25,7 +25,7 @@ const columnsMap = {
 
 router.get('/properties', cors(), async (req, res, next) => {
   try {
-    const result = await db.queryPromise('select * from property_local;');
+    const result = await db.queryPromise('select * from property;');
     res.json(result);
   } catch (err) {
     return next(err);
