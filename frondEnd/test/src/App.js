@@ -10,15 +10,15 @@ class App extends Component {
       .then(res => res.json())
       .then(properties => this.setState({ properties }));
 
-    this.postData();
+    this.postData([1, 2, 3]);
   }
-  postData = () => {
+  postData = (data) => {
     return fetch("/api/contribute", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ msg: "Hello from client" })
+      body: JSON.stringify(data)
     }).then(response => console.log(response.json()));
   };
 
