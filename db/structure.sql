@@ -1,6 +1,8 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+DROP TABLE IF EXISTS property;
+
 CREATE TABLE `property` (
   `link` varchar(255) NOT NULL,
   `market_date` date NOT NULL,
