@@ -12,10 +12,21 @@ router.get("/stats", cors(), (req, res) => {
 });
 
 router.post("/contribute", (req, res) => {
-  const items = JSON.parse(req.body.data);
+  let items;
+
+  switch (req.headers["content-type"]) {
+    case 'application/json':
+      items = req.body;
+      break;
+    case 'application/x-www-form-urlencoded':
+      items = JSON.parse(req.body.data);
+      break;
+    default:
+      throw new Error('Wrong content type ' + req.headers["content-type"]);
+  }
 
   if (!items || !Array.isArray(items)) {
-    return res.status(400).send("invalid data");
+    throw new Error('Invalid data');
   }
 
   res.json({
