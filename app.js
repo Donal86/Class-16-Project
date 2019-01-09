@@ -7,8 +7,8 @@ const app = express();
 
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false, limit:'50mb', parameterLimit: 1000000}));
+app.use(bodyParser.json({limit:'50mb'}));
 
 app.use("/api", require("./api"));
 
