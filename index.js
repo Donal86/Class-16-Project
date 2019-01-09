@@ -9,6 +9,8 @@ db.connect((err) => {
   }
 
   app.listen(process.env.PORT, () => {
-    console.log(`db is up, app is running at http://localhost:${process.env.PORT}`);
+    console.log(
+      `db is up, app is running at http://localhost:${process.env.PORT}`
+    );
   });
 });
