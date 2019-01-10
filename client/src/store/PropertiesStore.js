@@ -1,27 +1,30 @@
-import { observable, action, computed, runInAction } from "mobx";
+import { observable, action, computed, runInAction } from 'mobx';
 
 class PropertiesStore {
-  @observable properties = {
+  @observable
+  properties = {
     data: [],
-    status: "loading"
+    status: 'loading'
   };
 
-  @action listProperties() {
-    this.properties.status = "loading";
+  @action
+  listProperties() {
+    this.properties.status = 'loading';
     this.getProperties()
-      .then(properties => {
+      .then((properties) => {
         runInAction(() => {
-          this.properties.data = properties.result;
-          this.properties.status = "done";
+          this.properties.data = properties;
+          this.properties.status = 'done';
         });
       })
-      .catch(err => (this.properties.status = "error"));
+      .catch((err) => (this.properties.status = 'error'));
   }
-  @computed get propertiesCount() {
+  @computed
+  get propertiesCount() {
     return this.properties.data.length;
   }
   getProperties() {
-    return fetch("api/properties").then(response => response.json());
+    return fetch('api/properties').then((response) => response.json());
   }
 }
 

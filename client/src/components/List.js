@@ -1,7 +1,7 @@
-import React from "react";
-import { inject, observer } from "mobx-react";
+import React from 'react';
+import { inject, observer } from 'mobx-react';
 
-@inject("PropertiesStore")
+@inject('PropertiesStore')
 @observer
 class List extends React.Component {
   constructor(props) {
@@ -10,7 +10,9 @@ class List extends React.Component {
   }
   render() {
     const { PropertiesStore } = this.props;
-    return <div>{PropertiesStore.properties.data}</div>;
+    return (
+      <pre>{JSON.stringify(PropertiesStore.properties.data, null, 2)}</pre>
+    );
   }
 }
 
