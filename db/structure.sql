@@ -1,7 +1,7 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-DROP TABLE IF EXISTS property;
+DROP TABLE IF EXISTS `property`;
 
 CREATE TABLE `property` (
   `link` varchar(255) NOT NULL,
@@ -23,3 +23,17 @@ CREATE TABLE `property` (
   `sold` tinyint(4) NOT NULL,
   PRIMARY KEY (`link`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `city_status`;
+CREATE TABLE `city_status` (
+  `id` varchar(255) NOT NULL,
+  `city` varchar(100) NOT NULL,
+  `market_date` date NOT NULL,
+  `total_price` float NOT NULL,
+  `total_count` float NOT NULL,
+  `total_m2` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `city_status`
+  ADD PRIMARY KEY (`city`,`market_date`),
+  ADD UNIQUE KEY `id` (`id`);
