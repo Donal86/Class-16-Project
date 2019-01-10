@@ -1,5 +1,9 @@
 function errorHandler(error, req, res, next) {
-  res.status(500).json({ error: error.message });
+  if (res.statusCode === 200) {
+    res.status(500);
+  }
+
+  res.json({ error: error.message });
 }
 
 module.exports = errorHandler;
