@@ -33,9 +33,8 @@ const columnsMap = {
 router.get('/properties', cors(), async (req, res, next) => {
   try {
     const result = await db.queryPromise('select * from `property`;');
-    if (result.length < 1)
-      return res.status(301).json({ message: 'There are no houses!' });
-    else return res.status(200).json(result);
+
+    return res.json(result);
   } catch (err) {
     return next(err);
   }
@@ -50,66 +49,53 @@ router.post(
   '/contribute',
   upload.single('selectedFile'),
   async (req, res, next) => {
-    const { link, jsonData, type } = req.body;
-    if (req.body && type === 'url') {
-      fetchJsonURL(link)
-        .then((data) => handleResultsOfPromises(data, res))
-        .catch((err) => res.status(404).json({ invalidJson: err }));
-    } else if (type === 'file') {
-      const xx = req.file.path;
-      console.log('heeey', req.file);
-      const myFile = './' + xx;
+    try {
+      const { url, json, type } = req.body;
+      let data;
 
-      const deleteFile = (file) => {
-        fs.unlink(file, (err) => {
-          if (err) throw err;
-        });
-      };
-      setTimeout(() => {
-        deleteFile(myFile);
-      }, 30 * 6000);
-      readJsonFile(file)
-        .then((data) => {
-          const myData = JSON.parse(data);
-          return handleResultsOfPromises(myData, res);
-        })
-        .catch((err) => res.status(404).json({ invalidJson: err }));
-    }
+      switch (type) {
+        case 'url':
+          data = await fetchJsonURL(url);
+          break;
+        case 'json':
+          data = json;
+          break;
+        case 'file':
+          const xx = req.file.path;
 
-    // 9998989898989898989898989898989898989898989
-    else if (req.body && type === 'jsonData') {
-      //const items = JSON.parse(jsonData);
-      const items = [jsonData];
-      if (!items || !Array.isArray(items)) {
-        return res.status(400).send('invalid data');
+          const myFile = './' + xx;
+
+          const deleteFile = (file) => {
+            fs.unlink(file, (err) => {
+              if (err) throw err;
+            });
+          };
+
+          setTimeout(() => {
+            deleteFile(myFile);
+          }, 30 * 6000);
+
+          data = await readJsonFile(file);
+          break;
+        default:
+          return next(new Error('Unsupported type ' + type));
       }
-      return handleResultsOfPromises(items, res);
 
-      // const columns = Object.keys(columnsMap);
+      if (!data || !Array.isArray(data) || !data.length) {
+        res.status(400);
 
-      // const data = items.map(item => {
-      //   return columns.map(column => get(item, columnsMap[column]));
-      // })
+        throw new Error('Wrong data');
+      }
 
-      // const sql = `replace into \`property\` (${columns}) values ?;`;
-      // const params = [data];
-
-      // try {
-      //   await db.queryPromise(sql, params);
-
-      //   res.json({
-      //     result: 'POST /api/contribute - OK',
-      //     items: items.length
-      //   });
-      // } catch (err) {
-      //   return next(err);
-      // }
+      await handleResultsOfPromises(data, res);
+    } catch (err) {
+      return next(err);
     }
   }
 );
 
 router.use('*', (req, res, next) => {
-  res.status(404).send('404');
+  return res.status(404).end();
 });
 
 module.exports = router;
