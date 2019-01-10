@@ -78,7 +78,7 @@ router.post(
           data = await readJsonFile(file);
           break;
         default:
-          return next(new Error('Unsupported type ' + type));
+          return next(new Error(`Unsupported type "${type}"`));
       }
 
       if (!data || !Array.isArray(data) || !data.length) {
