@@ -1,9 +1,11 @@
+
 import React from "react";
 import { BrowserRouter as Router, Switch, NavLink } from "react-router-dom";
 import Route from "react-router-dom/Route";
 import List from "../components/List";
 import Contribute from "../components/contribution/Contribute";
 import NoMatch from "../components/NoMatch";
+import CityChart from '../components/stats/CityChart';
 
 class Index extends React.Component {
   render() {
@@ -41,6 +43,15 @@ class Index extends React.Component {
                 Contribute
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                to="/citychart"
+                exact
+                activeStyle={{ color: "gray" }}
+              >
+                Display charts
+							</NavLink>
+            </li>
           </ul>
           <Switch>
             <Route
@@ -52,6 +63,7 @@ class Index extends React.Component {
             />
             <Route path="/list" exact component={List} />
             <Route path="/contribute" exact component={Contribute} />
+            <Route path="/citychart" component={CityChart} />
             <Route component={NoMatch} />
           </Switch>
         </div>

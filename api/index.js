@@ -79,9 +79,35 @@ router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next)
   }
 });
 
+
 router.get('/stats', cors(), (req, res) => {
-  res.json({ result: 'GET /api/stats - OK' });
-})
+  const city = req.query.city || null;
+  let queryWhere = '';
+
+  if (city) {
+    queryWhere = `WHERE city = "${city}"`;
+  }
+  db.query(
+    `SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_stats ${queryWhere} GROUP BY market_date;`,
+    (err, result, fields) => {
+      if (err) {
+        res.send(err).end();
+      }
+      if (result.length < 1) {
+        res.json({ message: 'No content ' });
+      } else res.status(200).json(result);
+    }
+  );
+});
+router.get('/city-name', cors(), (req, res) => {
+  db.query(`select city from city_stats group by city order by city ASC;`, (err, result, fields) => {
+    if (err) {
+      res.status(400).end();
+    }
+    res.json(result);
+  });
+});
+
 
 const upload = reconizeFileUpload();
 router.post(

@@ -1,0 +1,26 @@
+.select-main {
+	padding: 20px;
+	width: 50%;
+	margin-left: 25%;
+}
+.price-heading {
+	color: rgb(61, 61, 41);
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	padding: 5px;
+	margin-bottom: 40px;
+}
+.chart-select {
+	padding: 20px;
+	width: 30%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.no-data {
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 22px;
+	padding: 10px;
+	margin-top: 100px;
+	color: #ff0000;
+}
