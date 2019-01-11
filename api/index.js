@@ -58,7 +58,7 @@ router.post(
           data = await fetchJsonURL(url);
           break;
         case 'json':
-          data = !Array.isArray(json) ? [json] : json;
+          data = json;
           break;
         case 'file':
           const xx = req.file.path;
