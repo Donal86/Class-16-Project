@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import SelectList from './SelectList';
 import DrawChart from './DrawChart';
 
 import './chart.css';
@@ -61,31 +60,43 @@ class CityChart extends Component {
 				}
 			]
 		},
-		priceChartTitle: 'Average price ',
-		sqrChartTitle: 'Average  square meter',
-		options: [
+		priceChartTitle: 'Average price',
+		sqrChartTitle: 'Average price per square meter ',
+		chartSelectOptions: [
 			{ value: 'AVG-PRICE-M2-CHART', label: 'AVG-PRICE-M2-CHART' },
 			{ value: 'AVG-PRICE-CHART', label: 'AVG-PRICE-CHART' }
 		],
-		toggleChart: false,
-		selectedOption: 'Athens-Center',
-		clickedOption: 'AVG-PRICE-CHART',
-		noDataError: false
+		clickedOption: { value: 'AVG-PRICE-CHART', label: 'AVG-PRICE-CHART' },
+		options: [],
+		selectedOption: { value: '', label: '' },
+		toggleChart: false
 	};
 
 	componentDidMount() {
-		this.handleSelectChange({ value: 'Athens-Center' });
+		this.getCitiesName();
+		this.handleSelectChange(this.state.selectedOption);
+
+		console.log(this.state.selectedOption);
 	}
+	groupCitiesForSelect = async (citiesList) => {
+		const optionsObj = citiesList.map((option) => ({ value: option.city, label: option.city }));
+		this.setState({
+			options: [ ...optionsObj ],
+			selectedOption: optionsObj[0]
+		});
+	};
+
+	getCitiesName = () => {
+		fetch(` http://localhost:3123/api/city-name`)
+			.then((res) => res.json())
+			.then((res) => this.groupCitiesForSelect(res))
+			.catch((err) => console.log(err));
+	};
 
 	updateState = (sourceData) => {
 		const allAveragesArray = [];
 		const avgPriceSqrArray = [];
 		const avgPriceDataArray = [];
-
-		if (sourceData.message) {
-			this.setState({ noDataError: true });
-			return;
-		}
 
 		const averagesObjByDate = sourceData.map((entry) => {
 			const { avgSqr, market_date, averagePrice } = entry;
@@ -143,8 +154,12 @@ class CityChart extends Component {
 	};
 
 	handleSelectChange = async (selectedOption) => {
-		await this.setState({ selectedOption });
-
+		await this.setState({
+			selectedOption,
+			clickedOption: { value: 'AVG-PRICE-CHART', label: 'AVG-PRICE-CHART' },
+			toggleChart: false
+		});
+		console.log(this.state.selectedOption);
 		fetch(`http://localhost:3123/api/stats?city=${selectedOption.value}`, {})
 			.then((res) => res.json())
 			.then((data) => this.updateState(data))
@@ -152,6 +167,7 @@ class CityChart extends Component {
 	};
 
 	handelChartSelectChange = async (clickedOption) => {
+		this.setState({ clickedOption });
 		if (clickedOption.value === 'AVG-PRICE-CHART') {
 			await this.setState({ toggleChart: true });
 		}
@@ -168,11 +184,13 @@ class CityChart extends Component {
 			sqrmChartData,
 			priceChartTitle,
 			sqrChartTitle,
-			noDataError,
-			toggleChart
+			toggleChart,
+			options,
+			clickedOption,
+			chartSelectOptions
 		} = this.state;
 
-		const renderContent = noDataError ? (
+		const renderContent = !options.length ? (
 			<p className="no-data "> Sorry, There are no data available now ...</p>
 		) : !toggleChart ? (
 			<DrawChart data={priceChartData} text={priceChartTitle} />
@@ -182,16 +200,21 @@ class CityChart extends Component {
 
 		return (
 			<div className="container">
-				<SelectList className="select" changeHandler={this.handleSelectChange} />
+				<Select
+					className="select-main"
+					value={selectedOption}
+					onChange={this.handleSelectChange}
+					options={options}
+					placeholder="Select City..."
+				/>
 				<h2 className="price-heading">{`Price trend in ${selectedOption.value} for the last 10 days ...`}</h2>
 				<Select
 					className="chart-select"
-					options={this.state.options}
-					value={this.state.clickedOption}
+					options={chartSelectOptions}
+					value={clickedOption}
 					onChange={this.handelChartSelectChange}
 					placeholder="Select Chart... "
 				/>
-
 				{renderContent}
 			</div>
 		);

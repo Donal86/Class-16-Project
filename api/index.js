@@ -79,35 +79,35 @@ router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next)
   }
 });
 
-
-router.get('/stats', cors(), (req, res) => {
-  const city = req.query.city || null;
-  let queryWhere = '';
-
-  if (city) {
-    queryWhere = `WHERE city = "${city}"`;
+router.get('/city-name', cors(), async (req, res, next) => {
+  try {
+    const sql = `select city from city_status group by city order by city ASC;`
+    const result = await db.queryPromise(sql);
+    if (!result.length) {
+      res.status(404).json(result);
+    }
+    else return res.json(result);
+  } catch (error) {
+    return next(error);
   }
-  db.query(
-    `SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_stats ${queryWhere} GROUP BY market_date;`,
-    (err, result, fields) => {
-      if (err) {
-        res.send(err).end();
-      }
-      if (result.length < 1) {
-        res.json({ message: 'No content ' });
-      } else res.status(200).json(result);
-    }
-  );
 });
-router.get('/city-name', cors(), (req, res) => {
-  db.query(`select city from city_stats group by city order by city ASC;`, (err, result, fields) => {
-    if (err) {
-      res.status(400).end();
-    }
-    res.json(result);
-  });
-});
+router.get('/stats', cors(), async (req, res, next) => {
+  try {
+    const city = req.query.city || null;
+    let queryWhere = "";
+    if (city) {
+      queryWhere = `WHERE city = "${city}"`;
+    } else { queryWhere = `WHERE city = "${null}"`; }
+    const sql = `SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_status ${queryWhere} GROUP BY market_date;`
+    const result = await db.queryPromise(sql);
 
+    if (result.length < 1) {
+      res.status(404).json(result)
+    } else return res.json(result);
+  } catch (error) {
+    return next(error);
+  }
+});
 
 const upload = reconizeFileUpload();
 router.post(
