@@ -63,7 +63,7 @@ router.post(
         case 'file':
           const xx = req.file.path;
 
-          const myFile = './' + xx;
+          const myFile = xx;
 
           const deleteFile = (file) => {
             fs.unlink(file, (err) => {
@@ -75,12 +75,12 @@ router.post(
             deleteFile(myFile);
           }, 30 * 6000);
 
-          data = await readJsonFile(file);
+          data = await readJsonFile(myFile);
+          
           break;
         default:
           return next(new Error(`Unsupported type "${type}"`));
       }
-
       if (!data || !Array.isArray(data) || !data.length) {
         res.status(400);
 
