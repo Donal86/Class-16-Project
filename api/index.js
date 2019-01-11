@@ -7,25 +7,26 @@ const { readJsonFile, fetchJsonURL, handleResultsOfPromises, reconizeFileUpload 
 const db = require('../db/');
 
 const columnsMap = {
-  link: 'link',
-  market_date: 'market_date',
-  location_country: 'location.country',
-  location_city: 'location.city',
-  location_address: 'location.address',
-  location_coordinates_lat: 'location.coordinates.lat',
-  location_coordinates_lng: 'location.coordinates.lng',
-  size_parcelm2: 'size.parcel_m2',
-  size_grossm2: 'size.gross_m2',
-  size_netm2: 'size.net_m2',
-  size_rooms: 'size.rooms',
-  price_value: 'price.value',
-  price_currency: 'price.currency',
-  description: 'description',
-  title: 'title',
-  images: 'images',
-  sold: 'sold'
+	link: 'link',
+	market_date: 'market_date',
+	location_country: 'location.country',
+	location_city: 'location.city',
+	location_address: 'location.address',
+	location_coordinates_lat: 'location.coordinates.lat',
+	location_coordinates_lng: 'location.coordinates.lng',
+	size_parcelm2: 'size.parcel_m2',
+	size_grossm2: 'size.gross_m2',
+	size_netm2: 'size.net_m2',
+	size_rooms: 'size.rooms',
+	price_value: 'price.value',
+	price_currency: 'price.currency',
+	description: 'description',
+	title: 'title',
+	images: 'images',
+	sold: 'sold'
 };
 
+<<<<<<< HEAD
 router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next) => {
   let { price_min = 0, price_max = Number.MAX_SAFE_INTEGER, order = 'market_date_asc', page = 1, rooms = 0 } = query;
   const limit = 5;
@@ -148,10 +149,94 @@ router.post('/contribute', upload.single('selectedFile'), async (req, res, next)
   } catch (err) {
     return next(err);
   }
+=======
+router.get('/properties', cors(), async (req, res, next) => {
+	try {
+		const result = await db.queryPromise('select * from `property`;');
+
+		return res.json(result);
+	} catch (err) {
+		return next(err);
+	}
+});
+
+router.get('/stats', cors(), (req, res) => {
+	const city = req.query.city || null;
+	let queryWhere = '';
+
+	if (city) {
+		queryWhere = `WHERE city = "${city}"`;
+	}
+	db.query(
+		`SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_stats ${queryWhere} GROUP BY market_date;`,
+		(err, result, fields) => {
+			if (err) {
+				res.send(err).end();
+			}
+			if (result.length < 1) {
+				res.json({ message: 'No content ' });
+			} else res.status(200).json(result);
+		}
+	);
+});
+router.get('/city-name', cors(), (req, res) => {
+	db.query(`select city from city_stats group by city order by city ASC;`, (err, result, fields) => {
+		if (err) {
+			res.status(400).end();
+		}
+		res.json(result);
+	});
+});
+
+const upload = reconizeFileUpload();
+router.post('/contribute', upload.single('selectedFile'), async (req, res, next) => {
+	try {
+		const { url, json, type } = req.body;
+		let data;
+
+		switch (type) {
+			case 'url':
+				data = await fetchJsonURL(url);
+				break;
+			case 'json':
+				data = json;
+				break;
+			case 'file':
+				const xx = req.file.path;
+
+				const myFile = './' + xx;
+
+				const deleteFile = (file) => {
+					fs.unlink(file, (err) => {
+						if (err) throw err;
+					});
+				};
+
+				setTimeout(() => {
+					deleteFile(myFile);
+				}, 30 * 6000);
+
+				data = await readJsonFile(file);
+				break;
+			default:
+				return next(new Error(`Unsupported type "${type}"`));
+		}
+
+		if (!data || !Array.isArray(data) || !data.length) {
+			res.status(400);
+
+			throw new Error('Wrong data');
+		}
+
+		await handleResultsOfPromises(data, res);
+	} catch (err) {
+		return next(err);
+	}
+>>>>>>> add chart code
 });
 
 router.use('*', (req, res, next) => {
-  return res.status(404).end();
+	return res.status(404).end();
 });
 
 module.exports = router;
