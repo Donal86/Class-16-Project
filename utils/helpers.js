@@ -126,13 +126,15 @@ async function insertIntoDatabase(report, houses, cityStatus) {
         ' location_coordinates_lng, size_parcelm2, size_grossm2, size_netm2, size_rooms, price_value, price_currency, description,';
 
       storeHousesQuery += 'title, images, sold) VALUES ?';
-
-      await db.queryPromise(storeHousesQuery, [houses]);
+      if(houses.length >= 1) {
+        await db.queryPromise(storeHousesQuery, [houses]);
+      }
 
       const statusQuery =
         'REPLACE INTO city_status (id, city, market_date, total_price, total_count, total_m2) VALUES ?';
-
-      await db.queryPromise(statusQuery, [cityStatus]);
+      if(cityStatus.length >= 1) {
+        await db.queryPromise(statusQuery, [cityStatus]);
+      }
     }
 
     return {
