@@ -2,7 +2,7 @@ import axios from 'axios';
 import { inject, observer } from 'mobx-react';
 import React from 'react';
 
-@inject('PropertiesStore')
+@inject("PropertiesStore")
 @observer
 class List extends React.Component {
   constructor(props) {
