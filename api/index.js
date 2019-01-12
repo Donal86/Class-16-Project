@@ -92,6 +92,7 @@ router.get('/city-name', cors(), async (req, res, next) => {
   }
 });
 router.get('/stats', cors(), async (req, res, next) => {
+<<<<<<< HEAD
   try {
     const city = req.query.city || null;
     let queryWhere = "";
@@ -107,6 +108,29 @@ router.get('/stats', cors(), async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
+=======
+	try {
+		const city = req.query.city || null;
+		let queryWhere = '';
+		if (city) {
+			queryWhere = `WHERE city = "${city}"`;
+		}
+		const result = await db.queryPromise(
+			`SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_status ${queryWhere} GROUP BY market_date;`);
+		return res.json(result);
+	} catch (error) {
+		return next(error);
+	}
+});
+
+router.get('/city-name', cors(), async (req, res, next) => {
+	try {
+		const result = await db.queryPromise(`select city from city_status group by city order by city ASC;`);
+		return res.json(result);
+	} catch (error) {
+		return next(error);
+	}
+>>>>>>> remove whitespaces and consoles
 });
 
 const upload = reconizeFileUpload();
