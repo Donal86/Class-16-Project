@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import DrawChart from './DrawChart';
-
 import './chart.css';
 import moment from 'moment';
 moment().format();
@@ -75,14 +74,12 @@ class CityChart extends Component {
 	componentDidMount() {
 		this.getCitiesName();
 		this.handleSelectChange(this.state.selectedOption);
-
-		console.log(this.state.selectedOption);
 	}
+
 	groupCitiesForSelect = async (citiesList) => {
 		const optionsObj = citiesList.map((option) => ({ value: option.city, label: option.city }));
 		this.setState({
-			options: [ ...optionsObj ],
-			selectedOption: optionsObj[0]
+			options: [...optionsObj], selectedOption: optionsObj[0]
 		});
 	};
 
@@ -97,40 +94,31 @@ class CityChart extends Component {
 		const allAveragesArray = [];
 		const avgPriceSqrArray = [];
 		const avgPriceDataArray = [];
-
 		const averagesObjByDate = sourceData.map((entry) => {
 			const { avgSqr, market_date, averagePrice } = entry;
 			const date = moment(market_date).format('YYYY-MM-DD');
-
 			const avgSqrNum = parseFloat(avgSqr.replace(/,/g, ''));
 			const avgPriceNum = parseFloat(averagePrice.replace(/,/g, ''));
-
 			return { avgPriceNum, avgSqrNum, date };
 		});
-
 		allAveragesArray.push(averagesObjByDate);
 		const currentDay = new Date();
-
 		let daysRangeDisplayed = moment(currentDay).subtract(10, 'd').format('YYYY-MM-DD');
-
 		const days = [];
 		while (moment(daysRangeDisplayed).isBefore(currentDay)) {
 			days.push(daysRangeDisplayed);
 			daysRangeDisplayed = moment(daysRangeDisplayed).add(1, 'days').format('YYYY-MM-DD');
 		}
-
 		allAveragesArray.forEach((eachAvgObj) => {
 			let lastAvgSqr = null;
 			let lastAvgPrice = null;
 			let currentIndex = 0;
 			const min = days[0];
 			const max = days[days.length - 1];
-
 			for (let day = min; day <= max; day = moment(day).add(1, 'days').format('YYYY-MM-DD')) {
 				if (day >= eachAvgObj[currentIndex].date) {
 					lastAvgSqr = eachAvgObj[currentIndex].avgSqrNum;
 					lastAvgPrice = eachAvgObj[currentIndex].avgPriceNum;
-
 					if (currentIndex < eachAvgObj.length - 1) currentIndex++;
 				}
 				avgPriceSqrArray.push(lastAvgSqr);
@@ -141,25 +129,19 @@ class CityChart extends Component {
 		const { sqrmChartData, priceChartData } = this.state;
 		this.setState({
 			sqrmChartData: {
-				...sqrmChartData,
-				labels: days,
-				datasets: [ { ...sqrmChartData.datasets[0], label: 'Per-Sqrm', data: avgPriceSqrArray } ]
+				...sqrmChartData, labels: days, datasets: [{ ...sqrmChartData.datasets[0], label: 'Per-Sqrm', data: avgPriceSqrArray }]
 			},
 			priceChartData: {
-				...priceChartData,
-				labels: days,
-				datasets: [ { ...priceChartData.datasets[0], label: 'price', data: avgPriceDataArray } ]
+				...priceChartData, labels: days, datasets: [{ ...priceChartData.datasets[0], label: 'price', data: avgPriceDataArray }]
 			}
 		});
 	};
 
 	handleSelectChange = async (selectedOption) => {
 		await this.setState({
-			selectedOption,
-			clickedOption: { value: 'AVG-PRICE-CHART', label: 'AVG-PRICE-CHART' },
-			toggleChart: false
+			selectedOption, clickedOption: { value: 'AVG-PRICE-CHART', label: 'AVG-PRICE-CHART' }, toggleChart: false
 		});
-		console.log(this.state.selectedOption);
+
 		fetch(`http://localhost:3123/api/stats?city=${selectedOption.value}`, {})
 			.then((res) => res.json())
 			.then((data) => this.updateState(data))
@@ -168,36 +150,21 @@ class CityChart extends Component {
 
 	handelChartSelectChange = async (clickedOption) => {
 		this.setState({ clickedOption });
-		if (clickedOption.value === 'AVG-PRICE-CHART') {
-			await this.setState({ toggleChart: true });
-		}
-		if (clickedOption.value === 'AVG-PRICE-M2-CHART') {
-			await this.setState({ toggleChart: false });
-		}
+		if (clickedOption.value === 'AVG-PRICE-CHART') { await this.setState({ toggleChart: true }); }
+		if (clickedOption.value === 'AVG-PRICE-M2-CHART') { await this.setState({ toggleChart: false }); }
 		this.setState({ toggleChart: !this.state.toggleChart });
 	};
 
 	render() {
 		const {
-			selectedOption,
-			priceChartData,
-			sqrmChartData,
-			priceChartTitle,
-			sqrChartTitle,
-			toggleChart,
-			options,
-			clickedOption,
-			chartSelectOptions
-		} = this.state;
-
+			selectedOption, priceChartData, sqrmChartData, priceChartTitle, sqrChartTitle, toggleChart, options, clickedOption, chartSelectOptions } = this.state;
 		const renderContent = !options.length ? (
 			<p className="no-data "> Sorry, There are no data available now ...</p>
 		) : !toggleChart ? (
 			<DrawChart data={priceChartData} text={priceChartTitle} />
 		) : (
-			<DrawChart data={sqrmChartData} text={sqrChartTitle} />
-		);
-
+					<DrawChart data={sqrmChartData} text={sqrChartTitle} />
+				);
 		return (
 			<div className="container">
 				<Select
