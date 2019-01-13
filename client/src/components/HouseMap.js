@@ -47,8 +47,8 @@ class HouseMap extends React.Component {
                 accu['lat'] = 0;
                 accu['lng'] = 0;
             } else {
-                accu['lat'] = accu['lat'] + house.lat / houses.length;
-                accu['lng'] = accu['lng'] + house.lng / houses.length;
+                accu['lat'] = accu['lat'] + house.location_coordinates_lat / houses.length;
+                accu['lng'] = accu['lng'] + house.location_coordinates_lng / houses.length;
             }
             return accu
         }, {})
