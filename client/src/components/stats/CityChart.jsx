@@ -165,6 +165,8 @@ class CityChart extends Component {
 		) : (
 					<DrawChart data={sqrmChartData} text={sqrChartTitle} />
 				);
+
+		const chartHeader = typeof this.state.selectedOption === 'undefined' ? `Price trend in selected city for the last 10 days ...` : `Price trend in ${selectedOption.value} for the last 10 days ...`;
 		return (
 			<div className="container">
 				<Select
@@ -174,7 +176,7 @@ class CityChart extends Component {
 					options={options}
 					placeholder="Select City..."
 				/>
-				<h2 className="price-heading">{`Price trend in ${selectedOption.value} for the last 10 days ...`}</h2>
+				<h2 className="price-heading">{chartHeader}</h2>
 				<Select
 					className="chart-select"
 					options={chartSelectOptions}
