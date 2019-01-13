@@ -2,6 +2,7 @@ import axios from 'axios';
 import { inject, observer } from 'mobx-react';
 import React from 'react';
 import { Link } from "react-router-dom";
+import HouseMap from "./HouseMap.js";
 
 @inject("PropertiesStore")
 @observer
@@ -187,6 +188,8 @@ class List extends React.Component {
 
           <div className="List-main">
             {this.state.total === 1 ? <div className="List-total"> Found {this.state.total} house </div> : <div className="List-total"> Found {this.state.total} houses </div>}
+
+            <HouseMap />
 
             <div className="List-filter">
               Order by: &nbsp;
