@@ -12,7 +12,8 @@ class PropertiesStore {
     amount: 1,
     currencies: [],
     total: 0,
-    insertStatus: "loading"
+    insertStatus: "loading",
+    details: []
   };
 
   @action
