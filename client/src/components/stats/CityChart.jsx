@@ -73,21 +73,25 @@ class CityChart extends Component {
 
 	componentDidMount() {
 		this.getCitiesName();
-		this.handleSelectChange(this.state.selectedOption);
 	}
-
-	groupCitiesForSelect = async (citiesList) => {
-		const optionsObj = citiesList.map((option) => ({ value: option.city, label: option.city }));
-		this.setState({
-			options: [...optionsObj], selectedOption: optionsObj[0]
-		});
-	};
 
 	getCitiesName = () => {
 		fetch(` http://localhost:3123/api/city-name`)
 			.then((res) => res.json())
-			.then((res) => this.groupCitiesForSelect(res))
+			.then((cities) => {
+				this.groupCitiesForSelect(cities);
+			})
 			.catch((err) => console.log(err));
+	};
+
+	groupCitiesForSelect = async (citiesList) => {
+		const optionsObj = citiesList.map((option) => ({ value: option.city, label: option.city }));
+		this.setState({
+			options: [...optionsObj],
+			selectedOption: optionsObj[0]
+		}, () => {
+			this.handleSelectChange(this.state.selectedOption);
+		});
 	};
 
 	updateState = (sourceData) => {

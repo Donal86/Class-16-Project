@@ -7,7 +7,10 @@ class App extends Component {
     return (
       <div className="App">
         <Index />
+<<<<<<< HEAD
         <MoneyConverter />
+=======
+>>>>>>> fix get cities flow
       </div>
     );
   }
