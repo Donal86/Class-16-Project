@@ -1,12 +1,12 @@
-const uuidv4 = require('uuid/v4');
-const path = require('path');
-const fs = require('fs');
-const fetch = require('node-fetch');
-const multer = require('multer');
-const db = require('../db/');
+const uuidv4 = require("uuid/v4");
+const path = require("path");
+const fs = require("fs");
+const fetch = require("node-fetch");
+const multer = require("multer");
+const db = require("../db/");
 
-const { validation } = require('./validateProperty');
-const { normalization } = require('./normalizeProperty');
+const { validation } = require("./validateProperty");
+const { normalization } = require("./normalizeProperty");
 
 function housesArrayProduce(houses) {
   let qurArr = [];
@@ -50,7 +50,7 @@ function housesArrayProduce(houses) {
 }
 
 function extractCities(houses) {
-  const citiesArr = houses.map((el) => el.location.city);
+  const citiesArr = houses.map(el => el.location.city);
   const cities = citiesArr.filter(function(item, pos) {
     return citiesArr.indexOf(item) == pos;
   });
@@ -59,21 +59,22 @@ function extractCities(houses) {
 
 function getOneCityStatus(city, houses) {
   let status = {
-    city: '',
-    marketDate: '',
+    id: "",
+    city: "",
+    marketDate: "",
     totalPrice: 0,
     totalCount: 0,
     totalM2: 0
   };
   const cities = extractCities(houses);
-  cities.forEach((place) => {
+  cities.forEach(place => {
     if (city) {
       if (city === place) {
         status.city = city;
         status.marketDate = new Date();
         let price = 0;
         let area = 0;
-        houses.forEach((house) => {
+        houses.forEach(house => {
           if (house.location.city === city) {
             //status.marketDate = new Date (house.market_date);
             status.totalCount += 1;
@@ -101,7 +102,7 @@ function getOneCityStatus(city, houses) {
 function getAllCitiesStatus(houses) {
   let citiesStatus = [];
   const cities = extractCities(houses);
-  cities.forEach((place) => {
+  cities.forEach(place => {
     citiesStatus.push(getOneCityStatus(place, houses));
   });
   return citiesStatus;
@@ -122,18 +123,18 @@ async function insertIntoDatabase(report, houses, cityStatus) {
   try {
     if (houses.length) {
       let storeHousesQuery =
-        'REPLACE INTO property (link, market_date, location_country, location_city, location_address, location_coordinates_lat,';
+        "REPLACE INTO property (link, market_date, location_country, location_city, location_address, location_coordinates_lat,";
 
       storeHousesQuery +=
-        ' location_coordinates_lng, size_parcelm2, size_grossm2, size_netm2, size_rooms, price_value, price_currency, description,';
+        " location_coordinates_lng, size_parcelm2, size_grossm2, size_netm2, size_rooms, price_value, price_currency, description,";
 
-      storeHousesQuery += 'title, images, sold) VALUES ?';
+      storeHousesQuery += "title, images, sold) VALUES ?";
       if (houses.length >= 1) {
         await db.queryPromise(storeHousesQuery, [houses]);
       }
 
       const statusQuery =
-        'REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?';
+        "REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?";
       if (cityStatus.length >= 1) {
         await db.queryPromise(statusQuery, [cityStatus]);
       }
@@ -188,7 +189,7 @@ function loopInValidation(data) {
 
 function loopInNormalization(data) {
   let filterdData = [];
-  data.forEach((el) => {
+  data.forEach(el => {
     const item = normalization(el);
     filterdData.push(item);
   });
@@ -196,7 +197,7 @@ function loopInNormalization(data) {
 }
 
 function fetchJsonURL(url) {
-  return fetch(url).then((response) => response.json());
+  return fetch(url).then(response => response.json());
 }
 
 function readJsonFile(file) {
@@ -224,13 +225,13 @@ async function handleResultsOfPromises(data, res) {
 }
 
 function reconizeFileUpload() {
-  if (!fs.existsSync('./uploaded-files')) {
-    fs.mkdirSync('./uploaded-files');
+  if (!fs.existsSync("./uploaded-files")) {
+    fs.mkdirSync("./uploaded-files");
   }
 
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, './uploaded-files');
+      cb(null, "./uploaded-files");
     },
     filename: (req, file, cb) => {
       const newFilename = `${uuidv4()}${path.extname(file.originalname)}`;

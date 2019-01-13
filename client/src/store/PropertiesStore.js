@@ -10,13 +10,9 @@ class PropertiesStore {
     fromCurrency: '',
     toCurrency: '',
     amount: 1,
-<<<<<<< HEAD
-    currencies: [], 
-    total: 0
-=======
     currencies: [],
+    total: 0,
     insertStatus: "loading"
->>>>>>> adding client contribute page
   };
 
   @action
