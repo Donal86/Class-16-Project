@@ -1,23 +1,17 @@
 import React, { Component } from "react"
 import './map.css';
 import { YMaps, Map, Clusterer, Placemark } from "react-yandex-maps";
-import { inject, observer } from 'mobx-react';
-
-@inject('PropertiesStore')
-@observer
 
 
 class HouseMap extends React.Component {
 
     constructor(props) {
         super(props);
-        props.PropertiesStore.listProperties();
     }
 
     render () {
         //it takes all houses' properties as a json file.
-        const { PropertiesStore } = this.props;
-        const houses = PropertiesStore.properties.data;
+        const { houses } = this.props;
         
         //when clicked a placemarker, you are going to see this content.
         //in the next step, I am going to add <a> for the detailed properties of each house

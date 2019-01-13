@@ -189,7 +189,7 @@ class List extends React.Component {
           <div className="List-main">
             {this.state.total === 1 ? <div className="List-total"> Found {this.state.total} house </div> : <div className="List-total"> Found {this.state.total} houses </div>}
 
-            <HouseMap />
+            <HouseMap houses={this.props.PropertiesStore.properties.data} />
 
             <div className="List-filter">
               Order by: &nbsp;
