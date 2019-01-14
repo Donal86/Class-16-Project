@@ -205,7 +205,8 @@ function readJsonFile(file) {
       if (error) {
         reject(error);
       } else {
-        resolve(JSON.parse(data));
+        const fileContent = JSON.parse(data);
+        resolve(fileContent);
       }
     });
   });
