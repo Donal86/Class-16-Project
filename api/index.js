@@ -75,7 +75,7 @@ router.post(
             deleteFile(myFile);
           }, 30 * 6000);
 
-          data = await readJsonFile(file);
+          data = await readJsonFile(myFile);
           break;
         default:
           return next(new Error(`Unsupported type "${type}"`));
