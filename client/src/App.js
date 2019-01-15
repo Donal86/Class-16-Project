@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import React, { Component } from "react";
 import Index from "./router/Index";
 import MoneyConverter from "./components/MoneyConverter";
+=======
+import React, { Component } from 'react';
+import Index from './router/Index';
+>>>>>>> remove chart.css from index
 
 class App extends Component {
   render() {
