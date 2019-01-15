@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { action, computed, observable } from 'mobx';
+import { action, computed, observable, runInAction } from 'mobx';
 
 class PropertiesStore {
   @observable
@@ -32,9 +32,9 @@ class PropertiesStore {
       });
   }
 
-  @action createProperty(jsonFromText) {
+  @action createProperty(jsonInput) {
     this.properties.insertStatus = "loading";
-    this.postProperty(jsonFromText)
+    this.postProperty(jsonInput)
       .then(result => {
         runInAction(() => {
           this.properties.details.push(result);

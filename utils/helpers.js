@@ -59,20 +59,12 @@ function extractCities(houses) {
 
 function getOneCityStatus(city, houses) {
   let status = {
-<<<<<<< HEAD
     id: "",
     city: "",
     marketDate: "",
-=======
-<<<<<<< HEAD
-    city: '',
-    marketDate: '',
-=======
     id: "",
     city: "",
     marketDate: "",
->>>>>>> adding contribute page
->>>>>>> adding contribute page
     totalPrice: 0,
     totalCount: 0,
     totalM2: 0
@@ -138,30 +130,16 @@ async function insertIntoDatabase(report, houses, cityStatus) {
 
       storeHousesQuery +=
         " location_coordinates_lng, size_parcelm2, size_grossm2, size_netm2, size_rooms, price_value, price_currency, description,";
-
-<<<<<<< HEAD
       storeHousesQuery += "title, images, sold) VALUES ?";
-=======
-<<<<<<< HEAD
-      storeHousesQuery += 'title, images, sold) VALUES ?';
-=======
       storeHousesQuery += "title, images, sold) VALUES ?";
->>>>>>> adding contribute page
->>>>>>> adding contribute page
+      storeHousesQuery += "title, images, sold) VALUES ?";
       if (houses.length >= 1) {
         await db.queryPromise(storeHousesQuery, [houses]);
       }
 
       const statusQuery =
-<<<<<<< HEAD
         "REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?";
-=======
-<<<<<<< HEAD
-        'REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?';
-=======
-        "REPLACE INTO city_status (id, city, market_date, total_price, total_count, total_m2) VALUES ?";
->>>>>>> adding contribute page
->>>>>>> adding contribute page
+
       if (cityStatus.length >= 1) {
         await db.queryPromise(statusQuery, [cityStatus]);
       }
