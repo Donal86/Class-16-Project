@@ -59,7 +59,6 @@ function extractCities(houses) {
 
 function getOneCityStatus(city, houses) {
   let status = {
-    id: "",
     city: "",
     marketDate: "",
     id: "",
@@ -139,7 +138,6 @@ async function insertIntoDatabase(report, houses, cityStatus) {
 
       const statusQuery =
         "REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?";
-
       if (cityStatus.length >= 1) {
         await db.queryPromise(statusQuery, [cityStatus]);
       }
