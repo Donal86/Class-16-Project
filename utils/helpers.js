@@ -22,14 +22,12 @@ function housesArrayProduce(houses) {
       title,
       sold
     } = house;
-    const houseId = uuidv4();
     const strImg = images.join();
     const myDate = new Date(market_date);
     const parcel_m2 = size.parcel_m2 || null;
     const gross_m2 = size.gross_m2 || null;
     const net_m2 = size.net_m2 || null;
     qurArr[i] = [
-      houseId,
       link,
       myDate,
       location.country,
@@ -127,7 +125,7 @@ async function insertIntoDatabase(report, houses, cityStatus) {
   try {
     if (houses.length) {
       let storeHousesQuery =
-        'REPLACE INTO property (id, link, market_date, location_country, location_city, location_address, location_coordinates_lat,';
+        'REPLACE INTO property (link, market_date, location_country, location_city, location_address, location_coordinates_lat,';
 
       storeHousesQuery +=
         ' location_coordinates_lng, size_parcelm2, size_grossm2, size_netm2, size_rooms, price_value, price_currency, description,';
