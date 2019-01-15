@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, NavLink } from "react-router-dom";
 import Route from "react-router-dom/Route";
 import List from "../components/List";
-import Contribute from "../components/Contribute";
+import Contribute from "../components/contribution/Contribute";
 import NoMatch from "../components/NoMatch";
 
 class Index extends React.Component {

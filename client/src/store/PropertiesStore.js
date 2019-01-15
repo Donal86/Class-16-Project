@@ -36,8 +36,7 @@ class PropertiesStore {
     this.postProperty(jsonFromText)
       .then(result => {
         runInAction(() => {
-          console.log("result: ", result);
-          // this.properties.details.push(result);
+          this.properties.details.push(result);
           this.properties.insertStatus = "done";
         });
       })
@@ -51,39 +50,28 @@ class PropertiesStore {
   get propertiesCount() {
     return this.properties.data.length;
   }
+
   getProperties() {
     return fetch('api/properties').then(response => response.json());
   }
 
-  postProperty(jsonFromText) {
-    return fetch("api/contribute", {
-      method: "POST",
-      body: JSON.stringify(jsonFromText),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    }).then(response => {
-      if (response.status === 400) {
-        return Promise.reject(
-          new Error(
-            "Invalid Please make sure you entered the right data form ..."
-          )
-        );
-      }
-      return response.json();
-    });
+  postProperty(jsonInput) {
+    return axios
+      .post("api/contribute", jsonInput)
+      .then(response => {
+        if (response.status === 400 || response.status === 500) {
+          return Promise.reject(
+            new Error(
+              "Invalid Please make sure you entered the right data form ..."
+            )
+          );
+        }
+        return response.data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
-  // postFromUrl(jsonFromUrl) {
-  //   return fetch("http://localhost:3121/uploadData/url", {
-  //     method: "POST",
-  //     body: JSON.stringify(jsonFromUrl),
-  //     headers: {
-  //       "Access-Control-Allow-Origin": "*",
-  //       "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
-  //       "Content-type": "application/json"
-  //     }
-  //   }).then(response => response.json());
-  // }
 
   convertHandler = () => {
     axios
