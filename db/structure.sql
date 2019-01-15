@@ -4,6 +4,7 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `property`;
 
 CREATE TABLE `property` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `link` varchar(255) NOT NULL,
   `market_date` date NOT NULL,
   `location_country` varchar(50) NOT NULL,
@@ -20,9 +21,27 @@ CREATE TABLE `property` (
   `description` text,
   `title` varchar(255) DEFAULT NULL,
   `images` text,
-  `sold` tinyint(4) NOT NULL,
-  PRIMARY KEY (`link`)
+  `sold` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
+-- Indexes for table `property`
+--
+ALTER TABLE `property`
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD UNIQUE KEY `link` (`link`) USING BTREE;
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `property`
+--
+ALTER TABLE `property`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
 
 DROP TABLE IF EXISTS `city_status`;
 CREATE TABLE `city_status` (
