@@ -60,7 +60,6 @@ function extractCities(houses) {
 
 function getOneCityStatus(city, houses) {
   let status = {
-    id: '',
     city: '',
     marketDate: '',
     totalPrice: 0,
@@ -71,7 +70,6 @@ function getOneCityStatus(city, houses) {
   cities.forEach((place) => {
     if (city) {
       if (city === place) {
-        status.id = uuidv4();
         status.city = city;
         status.marketDate = new Date();
         let price = 0;
@@ -84,12 +82,12 @@ function getOneCityStatus(city, houses) {
             price = price.toFixed(2);
             price = Number(price);
             status.totalPrice = price;
-            if(house.size.gross_m2) {
+            if (house.size.gross_m2) {
               area += Number(house.size.gross_m2);
-            }else if(house.size.net_m2) {
+            } else if (house.size.net_m2) {
               area += Number(house.size.net_m2);
-            }else area += Number(house.size.parcel_m2);
-            
+            } else area += Number(house.size.parcel_m2);
+
             area = area.toFixed(2);
             area = Number(area);
             status.totalM2 = area;
@@ -114,8 +112,8 @@ function statusArray(data) {
   let qurArray = [];
   const citiesStatus = getAllCitiesStatus(data);
   citiesStatus.forEach((place, i) => {
-    const { id, city, marketDate, totalPrice, totalCount, totalM2 } = place;
-    qurArray[i] = [id, city, marketDate, totalPrice, totalCount, totalM2];
+    const { city, marketDate, totalPrice, totalCount, totalM2 } = place;
+    qurArray[i] = [city, marketDate, totalPrice, totalCount, totalM2];
   });
   return qurArray;
 }
@@ -131,13 +129,13 @@ async function insertIntoDatabase(report, houses, cityStatus) {
         ' location_coordinates_lng, size_parcelm2, size_grossm2, size_netm2, size_rooms, price_value, price_currency, description,';
 
       storeHousesQuery += 'title, images, sold) VALUES ?';
-      if(houses.length >= 1) {
+      if (houses.length >= 1) {
         await db.queryPromise(storeHousesQuery, [houses]);
       }
 
       const statusQuery =
-        'REPLACE INTO city_status (id, city, market_date, total_price, total_count, total_m2) VALUES ?';
-      if(cityStatus.length >= 1) {
+        'REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?';
+      if (cityStatus.length >= 1) {
         await db.queryPromise(statusQuery, [cityStatus]);
       }
     }
@@ -166,7 +164,6 @@ function loopInValidation(data) {
       if (process.valid) final.push(el);
       else {
         const report = {
-          id: i + 1,
           messages: process.messages,
           raw: el
         };
@@ -180,7 +177,6 @@ function loopInValidation(data) {
     if (process.valid) final.push(data);
     else {
       const report = {
-        id: 1,
         messages: process.messages
       };
       err.push(report);
