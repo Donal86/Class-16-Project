@@ -45,26 +45,19 @@ function isNumeric(n) {
 }
 
 function dateValidation(date) {
-  const now = moment();
-  const newDate = new Date(date);
-  const isValid = moment(newDate).isValid();
-  if(isValid) {
-      // return moment(newDate).isBefore(now) ? true : false;
-      if(moment(newDate).isBefore(now)) return true;
+    const dateRegex = /^(((\d{4})(-)(0[13578]|10|12)(-)(0[1-9]|[12][0-9]|3[01]))|((\d{4})(-)(0[469]|1‌​1)(-)([0][1-9]|[12][0-9]|30))|((\d{4})(-)(02)(-)(0[1-9]|1[0-9]|2[0-8]))|(([02468]‌​[048]00)(-)(02)(-)(29))|(([13579][26]00)(-)(02)(-)(29))|(([0-9][0-9][0][48])(-)(0‌​2)(-)(29))|(([0-9][0-9][2468][048])(-)(02)(-)(29))|(([0-9][0-9][13579][26])(-)(02‌​)(-)(29)))(\s([0-1][0-9]|2[0-4]):([0-5][0-9]):([0-5][0-9]))$/;
+    const now = moment();
+    const newDate = new Date(date);
+    const isValid = moment(newDate).isValid();
+    if(isValid) {
+        if(moment(newDate).isBefore(now)) return true;
+    }else {
+        return date.match(dateRegex) 
+        ? (moment(date).isBefore(now) ? true : false)
+        : false;
+    }
+    return false;
   }
-  const test = [
-    moment(date, 'DD/MM/YYYY', true),
-    moment(date, 'DD-MM-YYYY', true),
-    moment(date, 'DD.MM.YYYY', true),
-    moment(date, 'MM/DD/YYYY', true),
-    moment(date, 'MM-DD-YYYY', true),
-    moment(date, 'MM.DD.YYYY', true)];
-  for(let i = 0; i < test.length; i++) {
-      if(test[i].isValid())
-      return moment(test[i]).isBefore(now) ? true : false;
-  }
-  return false;
-}
 
 // Check a valid string like address or country
 function stringValidation(str, method) {
@@ -111,7 +104,7 @@ const validation = (obj) => {
         process.valid = false;
     }
     if(!dateValidation(market_date)) {
-        process.messages.push('Invalid market date');
+        process.messages.push('Invalid market date, it must be in mysql format : YYYY-MM-DD');
         process.valid = false;
     }
     if(!stringValidation(location.city)) {
@@ -143,6 +136,17 @@ const validation = (obj) => {
         }
     }else {
         if(!stringValidation(location.address, 'address')) {
+            if(!hasProperties(location.coordinates, coordinatesProps)) {
+                process.messages.push('No address found! and one of coordinates properties is missing!');
+                process.valid = false;
+            }else {
+                if(!checkIfNumber(location['coordinates']['lat']) ||
+                    !checkIfNumber(location['coordinates']['lng'])) {
+                    process.messages.push('Invalid coordinates value, should be number!');
+                    process.valid = false;
+                }
+            }
+        }else {
             if(!hasProperties(location.coordinates, coordinatesProps)) {
                 process.messages.push('No address found! and one of coordinates properties is missing!');
                 process.valid = false;
