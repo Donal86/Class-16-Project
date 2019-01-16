@@ -15,19 +15,29 @@ class ResultsTable extends React.Component {
 
   render() {
     const { PropertiesStore } = this.props;
+    const showButton = PropertiesStore.properties.details[0].errMessages
+      .length ? (
+      <button type="button" className="btn btn-primary" onClick={this.LoadMore}>
+        Load More
+      </button>
+    ) : null;
     const tableElements = PropertiesStore.properties.details.map(
       (el, index) => (
         <div key={index}>
           <div>
-            <p>valid:</p>
+            <p>
+              <strong>valid:</strong>
+            </p>
             <p>{el.insertedItems}</p>
           </div>
           <div>
-            <p>failed:</p>
+            <p>
+              <strong>failed:</strong>
+            </p>
             <p>{el.errors}</p>
           </div>
           <div>
-            details:
+            <strong>details:</strong>
             {el.errMessages.length ? (
               el.errMessages.slice(0, this.state.limit).map((msg, i) => (
                 <div key={i}>
@@ -48,9 +58,9 @@ class ResultsTable extends React.Component {
     return (
       <div className="pages">
         <div className="result-table">
-          <p>Results:</p>
+          <h4>Results:</h4>
           {tableElements}
-          <button onClick={this.LoadMore}>Load More</button>
+          {showButton}
         </div>
       </div>
     );
