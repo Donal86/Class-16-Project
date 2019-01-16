@@ -8,6 +8,7 @@ import CityChart from '../components/stats/CityChart';
 import HouseDetails from '../components/houseDetails'
 import CurrencyConverter from "../components/currencyConverter"
 import Apidoc from "../components/Apidoc";
+import MainMap from "../components/map/mainMap.js";
 
 class Index extends React.Component {
   render() {
@@ -59,6 +60,16 @@ class Index extends React.Component {
             <li>
               <NavLink
                 className="nav-link"
+                to={{ pathname: "map" }}
+                exact
+                activeStyle={{ color: "gray" }}
+              >
+                Map
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                className="nav-link"
                 to={{ pathname: "doc" }}
                 exact
                 activeStyle={{ color: "gray" }}
@@ -80,6 +91,7 @@ class Index extends React.Component {
             <Route path="/citychart/:city?" component={CityChart} />
             <Route path='/house/:id?' component={HouseDetails} />
             <Route path="/doc" component={Apidoc} />
+            <Route path="/map" component={MainMap} />
             <Route component={NoMatch} />
           </Switch>
         </div>
