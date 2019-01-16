@@ -57,21 +57,17 @@ class PropertiesStore {
   }
 
   postProperty(jsonInput) {
-    return axios
-      .post("api/contribute", jsonInput)
-      .then(response => {
-        if (response.status === 400 || response.status === 500) {
-          return Promise.reject(
-            new Error(
-              "Invalid Please make sure you entered the right data form ..."
-            )
-          );
-        }
-        return response.data;
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    return axios.post("api/contribute", jsonInput).then(response => {
+      if (response.status === 400 || response.status === 500) {
+        return Promise.reject(
+          new Error(
+            "Invalid Please make sure you entered the right data form ..."
+          )
+        );
+      }
+
+      return response.data;
+    });
   }
 
   convertHandler = () => {

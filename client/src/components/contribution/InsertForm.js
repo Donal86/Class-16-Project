@@ -40,11 +40,12 @@ class InsertForm extends React.Component {
 
   render() {
     const { state } = this;
+    const { PropertiesStore } = this.props;
     return (
       <div className="insert-form">
-        {this.props.PropertiesStore.properties.insertStatus === "error" ? (
+        {PropertiesStore.properties.insertStatus === "error" ? (
           <p className="error">Please make sure you entered valid inputs</p>
-        ) : this.props.PropertiesStore.properties.insertStatus === "done" ? (
+        ) : PropertiesStore.properties.insertStatus === "done" ? (
           <p className="succeed">Valid!</p>
         ) : null}
         <form onSubmit={e => this.insertJson(e)}>
