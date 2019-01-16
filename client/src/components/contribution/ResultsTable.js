@@ -4,6 +4,15 @@ import { inject, observer } from "mobx-react";
 @inject("PropertiesStore")
 @observer
 class ResultsTable extends React.Component {
+  state = {
+    limit: 2
+  };
+  LoadMore = () => {
+    this.setState({
+      limit: this.state.limit + 3
+    });
+  };
+
   render() {
     const { PropertiesStore } = this.props;
     const tableElements = PropertiesStore.properties.details.map(
@@ -20,12 +29,8 @@ class ResultsTable extends React.Component {
           <div>
             details:
             {el.errMessages.length ? (
-              el.errMessages.map((msg, i) => (
+              el.errMessages.slice(0, this.state.limit).map((msg, i) => (
                 <div key={i}>
-                  <p>
-                    <span>error occurred in object number </span>
-                    {msg.id}
-                  </p>
                   <p>
                     <span>error message: </span>
                     {msg.messages}
@@ -45,6 +50,7 @@ class ResultsTable extends React.Component {
         <div className="result-table">
           <p>Results:</p>
           {tableElements}
+          <button onClick={this.LoadMore}>Load More</button>
         </div>
       </div>
     );
