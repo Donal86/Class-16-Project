@@ -44,19 +44,13 @@ function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+const DATE_FORMAT = 'YYYY-MM-DD';
+
 function dateValidation(date) {
-    const dateRegex = /^(((\d{4})(-)(0[13578]|10|12)(-)(0[1-9]|[12][0-9]|3[01]))|((\d{4})(-)(0[469]|1‌​1)(-)([0][1-9]|[12][0-9]|30))|((\d{4})(-)(02)(-)(0[1-9]|1[0-9]|2[0-8]))|(([02468]‌​[048]00)(-)(02)(-)(29))|(([13579][26]00)(-)(02)(-)(29))|(([0-9][0-9][0][48])(-)(0‌​2)(-)(29))|(([0-9][0-9][2468][048])(-)(02)(-)(29))|(([0-9][0-9][13579][26])(-)(02‌​)(-)(29)))(\s([0-1][0-9]|2[0-4]):([0-5][0-9]):([0-5][0-9]))$/;
     const now = moment();
-    const newDate = new Date(date);
-    const isValid = moment(newDate).isValid();
-    if (isValid) {
-        if (moment(newDate).isBefore(now)) return true;
-    } else {
-        return date.match(dateRegex)
-            ? (moment(date).isBefore(now) ? true : false)
-            : false;
-    }
-    return false;
+    const parsed = moment(date, DATE_FORMAT, true);
+
+    return parsed.isValid() && !parsed.isAfter(now);
 }
 
 // Check a valid string like address or country
@@ -104,7 +98,7 @@ const validation = (obj) => {
             process.valid = false;
         }
         if (!dateValidation(market_date)) {
-            process.messages.push('Invalid market date, it must be in mysql format : YYYY-MM-DD');
+            process.messages.push(`Invalid market date, it must be in past and in mysql format : ${DATE_FORMAT}`);
             process.valid = false;
         }
         if (!stringValidation(location.city)) {
