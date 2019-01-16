@@ -57,7 +57,7 @@ class Index extends React.Component {
 							</Link>
 						</li>
 						<li>
-							<Link to="/citychart" exact={true}>
+							<Link to={{ pathname: "citychart" }} exact={true}>
 								Display charts
 							</Link>
 						</li>

@@ -163,10 +163,10 @@ router.get('/properties', cors(), async (req, res, next) => {
 router.get('/stats', cors(), async (req, res, next) => {
 	try {
 		const city = req.query.city || null;
-		let queryWhere = '';
+		let queryWhere = "";
 		if (city) {
 			queryWhere = `WHERE city = "${city}"`;
-		}
+		} else { queryWhere = `WHERE city = "${null}"`; }
 		const result = await db.queryPromise(
 			`SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_status ${queryWhere} GROUP BY market_date;`);
 		return res.json(result);

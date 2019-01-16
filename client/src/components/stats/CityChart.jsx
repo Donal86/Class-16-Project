@@ -59,24 +59,28 @@ class CityChart extends Component {
 				}
 			]
 		},
-		priceChartTitle: 'Average price',
-		sqrChartTitle: 'Average price per square meter ',
-		chartSelectOptions: [
-			{ value: 'AVG-PRICE-M2-CHART', label: 'AVG-PRICE-M2-CHART' },
-			{ value: 'AVG-PRICE-CHART', label: 'AVG-PRICE-CHART' }
-		],
-		clickedOption: { value: 'AVG-PRICE-CHART', label: 'AVG-PRICE-CHART' },
 		options: [],
-		selectedOption: { value: '', label: '' },
-		toggleChart: false
+		selectedOption: null,
+		priceChartTitle: 'Average price per property',
+		sqrChartTitle: 'Average price per square meter ',
 	};
 
 	componentDidMount() {
 		this.getCitiesName();
+
+		const cityQuery = this.props.location.search.replace(/(\?city=)(\S)/i, '$2');
+		if (this.props.location.search) {
+			if (!(/city/i).test(cityQuery)) {
+				this.setState({ selectedOption: { value: cityQuery, label: cityQuery } })
+				this.linkQuerySelect(cityQuery);
+			}
+		} else {
+			this.linkQuerySelect(cityQuery);
+		}
 	}
 
-	getCitiesName = () => {
-		fetch(` http://localhost:3123/api/city-name`)
+	getCitiesName = async () => {
+		return await fetch(` http://localhost:3123/api/city-name`)
 			.then((res) => res.json())
 			.then((cities) => {
 				this.groupCitiesForSelect(cities);
@@ -84,14 +88,11 @@ class CityChart extends Component {
 			.catch((err) => console.log(err));
 	};
 
-	groupCitiesForSelect = async (citiesList) => {
+	groupCitiesForSelect = (citiesList) => {
 		const optionsObj = citiesList.map((option) => ({ value: option.city, label: option.city }));
 		this.setState({
 			options: [...optionsObj],
-			selectedOption: optionsObj[0]
-		}, () => {
-			this.handleSelectChange(this.state.selectedOption);
-		});
+		})
 	};
 
 	updateState = (sourceData) => {
@@ -136,41 +137,29 @@ class CityChart extends Component {
 				...sqrmChartData, labels: days, datasets: [{ ...sqrmChartData.datasets[0], label: 'Per-Sqrm', data: avgPriceSqrArray }]
 			},
 			priceChartData: {
-				...priceChartData, labels: days, datasets: [{ ...priceChartData.datasets[0], label: 'price', data: avgPriceDataArray }]
+				...priceChartData, labels: days, datasets: [{ ...priceChartData.datasets[0], label: 'Per-Property', data: avgPriceDataArray }]
 			}
 		});
 	};
 
-	handleSelectChange = async (selectedOption) => {
-		await this.setState({
-			selectedOption, clickedOption: { value: 'AVG-PRICE-CHART', label: 'AVG-PRICE-CHART' }, toggleChart: false
-		});
-
-		fetch(`http://localhost:3123/api/stats?city=${selectedOption.value}`, {})
+	linkQuerySelect = async (city) => {
+		return await fetch(`http://localhost:3123/api/stats?city=${city}`, {})
 			.then((res) => res.json())
 			.then((data) => this.updateState(data))
 			.catch((err) => console.log(err));
-	};
+	}
 
-	handelChartSelectChange = async (clickedOption) => {
-		this.setState({ clickedOption });
-		if (clickedOption.value === 'AVG-PRICE-CHART') { await this.setState({ toggleChart: true }); }
-		if (clickedOption.value === 'AVG-PRICE-M2-CHART') { await this.setState({ toggleChart: false }); }
-		this.setState({ toggleChart: !this.state.toggleChart });
+	handleSelectChange = async (selectedOption) => {
+		await this.setState({ selectedOption });
+		this.linkQuerySelect(selectedOption.value)
+		this.props.history.push("?city=" + this.state.selectedOption.value)
 	};
 
 	render() {
 		const {
-			selectedOption, priceChartData, sqrmChartData, priceChartTitle, sqrChartTitle, toggleChart, options, clickedOption, chartSelectOptions } = this.state;
-		const renderContent = !options.length ? (
-			<p className="no-data "> Sorry, There are no data available now ...</p>
-		) : !toggleChart ? (
-			<DrawChart data={priceChartData} text={priceChartTitle} />
-		) : (
-					<DrawChart data={sqrmChartData} text={sqrChartTitle} />
-				);
+			selectedOption, priceChartData, sqrmChartData, priceChartTitle, sqrChartTitle, options } = this.state;
 
-		const chartHeader = typeof this.state.selectedOption === 'undefined' ? `Price trend in selected city for the last 10 days ...` : `Price trend in ${selectedOption.value} for the last 10 days ...`;
+		const chartHeader = typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? `Properties price trend in selected city for the last 10 days ...` : `Properties price trend in ${selectedOption.value} for the last 10 days ...`;
 		return (
 			<div className="container">
 				<Select
@@ -181,14 +170,10 @@ class CityChart extends Component {
 					placeholder="Select City..."
 				/>
 				<h2 className="price-heading">{chartHeader}</h2>
-				<Select
-					className="chart-select"
-					options={chartSelectOptions}
-					value={clickedOption}
-					onChange={this.handelChartSelectChange}
-					placeholder="Select Chart... "
-				/>
-				{renderContent}
+				<div className="charts-div"><div className="test"><DrawChart data={priceChartData} text={priceChartTitle} /></div>
+					<div className="test"><DrawChart data={sqrmChartData} text={sqrChartTitle} /></div>
+				</div>
+
 			</div>
 		);
 	}

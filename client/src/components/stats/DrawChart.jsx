@@ -3,6 +3,7 @@ import { Line } from 'react-chartjs-2';
 
 class DrawChart extends Component {
 	state = {
+		width: 275,
 		options: {
 			backgroundColor: 'red',
 			title: {
@@ -32,10 +33,10 @@ class DrawChart extends Component {
 		const { title } = this.state.options;
 		const { text } = this.props;
 		return (
-			<div className="container">
+			<div className="chart">
 				<Line
 					data={this.props.data}
-					height={85}
+					width={this.state.width}
 					options={{
 						...this.state.options,
 						title: { ...title, title, text: text }
@@ -45,5 +46,4 @@ class DrawChart extends Component {
 		);
 	}
 }
-
 export default DrawChart;
