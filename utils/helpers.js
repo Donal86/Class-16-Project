@@ -22,13 +22,14 @@ function housesArrayProduce(houses) {
       title,
       sold
     } = house;
+    const marketDate = new Date(market_date);
     const strImg = images.join();
     const parcel_m2 = size.parcel_m2 || null;
     const gross_m2 = size.gross_m2 || null;
     const net_m2 = size.net_m2 || null;
     qurArr[i] = [
       link,
-      market_date,
+      marketDate,
       location.country,
       location.city,
       location.address,
