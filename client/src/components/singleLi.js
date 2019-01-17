@@ -5,45 +5,11 @@ class SingleLi extends Component {
     super(props)
   }
   render () {
-    const {
-      link,
-      country,
-      city,
-      marketDate,
-      address,
-      parcelArea,
-      grossArea,
-      netArea,
-      rooms,
-      price,
-      currency,
-      title,
-      description,
-      images,
-      lat,
-      lng
-    } = this.props
-    const house = {
-      link,
-      country,
-      city,
-      marketDate,
-      address,
-      parcelArea,
-      grossArea,
-      netArea,
-      rooms,
-      price,
-      currency,
-      title,
-      description,
-      images,
-      lat,
-      lng
-    }
+    const { id } = this.props
+
     return (
       <li>
-        <Link to={{ pathname: '/house', state: house }}>click here</Link>
+        <Link to={`/house?id=${id}`}>click here</Link>
       </li>
     )
   }

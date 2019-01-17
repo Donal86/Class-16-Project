@@ -5,7 +5,7 @@ import List from "../components/List";
 import Contribute from "../components/contribution/Contribute";
 import NoMatch from "../components/NoMatch";
 import CityChart from '../components/stats/CityChart';
-import Details from '../components/houseDetails'
+import HouseDetails from '../components/houseDetails'
 
 class Index extends React.Component {
   render() {
@@ -65,7 +65,7 @@ class Index extends React.Component {
             <Route path="/list" exact component={List} />
             <Route path="/contribute" exact component={Contribute} />
             <Route path="/citychart/:city?" component={CityChart} />
-            <Route path='/house' component={Details} />
+            <Route path='/house/:id?' component={HouseDetails} />
             <Route component={NoMatch} />
           </Switch>
         </div>
