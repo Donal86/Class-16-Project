@@ -105,43 +105,55 @@ router.get('/stats', cors(), (req, res) => {
 })
 
 const upload = reconizeFileUpload();
-router.post('/contribute', upload.single('selectedFile'), async (req, res, next) => {
-  try {
-    const { url, json, type } = req.body;
-    let data;
+router.post(
+  "/contribute",
+  upload.single("selectedFile"),
+  async (req, res, next) => {
+    try {
+      const { url, json, type } = req.body;
+      let data;
 
-    switch (type) {
-      case 'url':
-        data = await fetchJsonURL(url);
-        break;
-      case 'json':
-        data = json;
-        break;
-      case 'file':
-        const xx = req.file.path;
+      console.log(type, url);
 
-        const myFile = './' + xx;
+      switch (type) {
+        case "url":
+          data = await fetchJsonURL(url);
+          break;
+        case "json":
+          data = JSON.parse(json);
+          break;
+        case "file":
+          const xx = req.file.path;
 
-        const deleteFile = file => {
-          fs.unlink(file, err => {
-            if (err) throw err;
-          });
-        };
+          const myFile = "./" + xx;
 
-        setTimeout(() => {
-          deleteFile(myFile);
-        }, 30 * 6000);
+          const deleteFile = file => {
+            fs.unlink(file, err => {
+              if (err) throw err;
+            });
+          };
 
-        data = await readJsonFile(myFile);
-        break;
-      default:
-        return next(new Error(`Unsupported type "${type}"`));
-    }
+          setTimeout(() => {
+            deleteFile(myFile);
+          }, 30 * 6000);
 
-    if (!data || !Array.isArray(data) || !data.length) {
-      res.status(400);
+          data = await readJsonFile(myFile);
+          break;
+        default:
+          return next(new Error(`Unsupported type "${type}"`));
+      }
 
-      throw new Error('Wrong data');
+      console.log(Array.isArray(data), data.length);
+
+      if (!data || !Array.isArray(data) || !data.length) {
+        res.status(400);
+
+        throw new Error("Wrong data");
+      }
+
+      await handleResultsOfPromises(data, res);
+    } catch (err) {
+      return next(err);
     }
 
     await handleResultsOfPromises(data, res);
