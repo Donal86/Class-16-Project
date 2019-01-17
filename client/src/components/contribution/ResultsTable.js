@@ -1,5 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
+import { Redirect } from "react-router-dom";
 
 @inject("PropertiesStore")
 @observer
@@ -15,12 +16,18 @@ class ResultsTable extends React.Component {
 
   render() {
     const { PropertiesStore } = this.props;
-    const showButton = PropertiesStore.properties.details[0].errMessages
-      .length ? (
-      <button type="button" className="btn btn-primary" onClick={this.LoadMore}>
-        Load More
-      </button>
-    ) : null;
+    const errMsgLength =
+      PropertiesStore.properties.details[0].errMessages.length;
+    const showButton =
+      errMsgLength && this.state.limit < errMsgLength ? (
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={this.LoadMore}
+        >
+          Load More
+        </button>
+      ) : null;
     const tableElements = PropertiesStore.properties.details.map(
       (el, index) => (
         <div key={index}>
@@ -58,6 +65,7 @@ class ResultsTable extends React.Component {
     return (
       <div className="pages">
         <div className="result-table">
+          <button>Back to form</button>
           <h4>Results:</h4>
           {tableElements}
           {showButton}

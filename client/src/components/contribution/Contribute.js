@@ -1,7 +1,8 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import ResultsTable from "./ResultsTable";
+// import ResultsTable from "./ResultsTable";
 import InsertForm from "./InsertForm";
+import { Redirect } from "react-router-dom";
 
 @inject("PropertiesStore")
 @observer
@@ -9,7 +10,7 @@ class Contribute extends React.Component {
   render() {
     const { PropertiesStore } = this.props;
     const insertResults = PropertiesStore.properties.details.length ? (
-      <ResultsTable />
+      <Redirect to="/contribute/result" />
     ) : (
       <InsertForm />
     );
