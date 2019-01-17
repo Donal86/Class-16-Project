@@ -4,8 +4,6 @@ import Route from "react-router-dom/Route";
 import List from "../components/List";
 import Contribute from "../components/contribution/Contribute";
 import NoMatch from "../components/NoMatch";
-import ResultsTable from "../components/contribution/ResultsTable";
-import InsertForm from "../components/contribution/InsertForm";
 
 class Index extends React.Component {
   render() {
@@ -54,8 +52,6 @@ class Index extends React.Component {
             />
             <Route path="/list" exact component={List} />
             <Route path="/contribute" exact component={Contribute} />
-            <Route path="/contribute/result" exact component={ResultsTable} />
-            <Route path="/contribute/insertForm" exact component={InsertForm} />
             <Route component={NoMatch} />
           </Switch>
         </div>

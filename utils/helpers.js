@@ -51,7 +51,7 @@ function housesArrayProduce(houses) {
 
 function extractCities(houses) {
   const citiesArr = houses.map(el => el.location.city);
-  const cities = citiesArr.filter(function(item, pos) {
+  const cities = citiesArr.filter(function (item, pos) {
     return citiesArr.indexOf(item) == pos;
   });
   return cities;
@@ -130,8 +130,7 @@ async function insertIntoDatabase(report, houses, cityStatus) {
       storeHousesQuery +=
         " location_coordinates_lng, size_parcelm2, size_grossm2, size_netm2, size_rooms, price_value, price_currency, description,";
       storeHousesQuery += "title, images, sold) VALUES ?";
-      storeHousesQuery += "title, images, sold) VALUES ?";
-      storeHousesQuery += "title, images, sold) VALUES ?";
+
       if (houses.length >= 1) {
         await db.queryPromise(storeHousesQuery, [houses]);
       }
