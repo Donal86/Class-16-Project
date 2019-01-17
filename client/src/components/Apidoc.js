@@ -6,40 +6,38 @@ class Apidoc extends React.Component {
     render () {
         
         const jsonFileFormat = {
-            "link": "string url - not null",
-            "title": "string - not null",
-            "location": { //"object - not null"
-                "country": "string - not null",
-                "city": "string - not null",
-                "address": "string",
+            "link": "string url - NOT NULL",
+            "title": "string - NOT NULL",
+            "location": {
+                "country": "string - NOT NULL",
+                "city": "string - NOT NULL",
+                "address": "string - NOT NULL, IF coordinates NULL",
                 "coordinates": {
-                    "lat": "number",
-                    "lng": "number"
+                    "lat": "number - NOT NULL, IF address NULL",
+                    "lng": "number - NOT NULL, IF address NULL"
                 }
-                // "address || coordinates -> not null"
             },
-            "market_date": "valid date OR now( ) - not null",
+            "market_date": "valid date OR now( ) - NOT NULL",
             "size": {
-                "parcel_m2": "number",
-                "gross_m2": "number",
-                "net_m2": "number",
-                // parcel_m2 || gross_m2 || net_m2 -> not null
-                "rooms": "number - not null"
+                "parcel_m2": "number - NOT NULL, IF gross_m2 AND net_m2 NULL",
+                "gross_m2": "number - NOT NULL, IF parcel_m2 AND net_m2 NULL",
+                "net_m2": "number - NOT NULL, IF gross_m2 AND parcel_m2 NULL",
+                "rooms": "number - NOT NULL"
             },
             "price": {
-                "value": "number - not null",
-                "currency": "string - 3chars - not null"
+                "value": "number - NOT NULL",
+                "currency": "string - 3chars - NOT NULL"
             },
             "description": "string",
             "images": "Array ['string -url', 'string -url']",
-            "sold": "boolean - not null"
+            "sold": "boolean - NOT NULL"
         }
 
         return(
             <div className="addElement">
             <h1>API Documentation</h1>
-            <div class='index-content'>
-                <div class='index'>
+            <div className='index-content'>
+                <div className='index'>
                     <a href="#introduction">
                         <h3>Introduction</h3>
                     </a>
@@ -61,7 +59,7 @@ class Apidoc extends React.Component {
                     </a>
                 </div>
         
-                <div class='content'>
+                <div className='content'>
                     <div id='introduction'>
                         <h2>Introduction</h2>
                         <p>The Open Source Factory is to aim that the information reaches people freely. In This
