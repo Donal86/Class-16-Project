@@ -173,8 +173,8 @@ li.active
   padding: 10px;
 }
 .guide-link-div {
-  padding: 3px;
-  margin: 10px;
+  padding: 3px 0;
+  margin: 20px 0;
   overflow: auto;
 }
 .guide-link {
