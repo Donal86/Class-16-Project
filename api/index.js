@@ -105,55 +105,43 @@ router.get('/stats', cors(), (req, res) => {
 })
 
 const upload = reconizeFileUpload();
-router.post(
-  "/contribute",
-  upload.single("selectedFile"),
-  async (req, res, next) => {
-    try {
-      const { url, json, type } = req.body;
-      let data;
+router.post('/contribute', upload.single('selectedFile'), async (req, res, next) => {
+  try {
+    const { url, json, type } = req.body;
+    let data;
 
-      console.log(type, url);
+    switch (type) {
+      case 'url':
+        data = await fetchJsonURL(url);
+        break;
+      case 'json':
+        data = json;
+        break;
+      case 'file':
+        const xx = req.file.path;
 
-      switch (type) {
-        case "url":
-          data = await fetchJsonURL(url);
-          break;
-        case "json":
-          data = JSON.parse(json);
-          break;
-        case "file":
-          const xx = req.file.path;
+        const myFile = './' + xx;
 
-          const myFile = "./" + xx;
+        const deleteFile = file => {
+          fs.unlink(file, err => {
+            if (err) throw err;
+          });
+        };
 
-          const deleteFile = file => {
-            fs.unlink(file, err => {
-              if (err) throw err;
-            });
-          };
+        setTimeout(() => {
+          deleteFile(myFile);
+        }, 30 * 6000);
 
-          setTimeout(() => {
-            deleteFile(myFile);
-          }, 30 * 6000);
+        data = await readJsonFile(myFile);
+        break;
+      default:
+        return next(new Error(`Unsupported type "${type}"`));
+    }
 
-          data = await readJsonFile(myFile);
-          break;
-        default:
-          return next(new Error(`Unsupported type "${type}"`));
-      }
+    if (!data || !Array.isArray(data) || !data.length) {
+      res.status(400);
 
-      console.log(Array.isArray(data), data.length);
-
-      if (!data || !Array.isArray(data) || !data.length) {
-        res.status(400);
-
-        throw new Error("Wrong data");
-      }
-
-      await handleResultsOfPromises(data, res);
-    } catch (err) {
-      return next(err);
+      throw new Error('Wrong data');
     }
 
     await handleResultsOfPromises(data, res);
