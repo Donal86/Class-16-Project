@@ -13,6 +13,7 @@ class PropertiesStore {
     currencies: [],
     total: 0,
     insertStatus: "loading",
+    errorMessage: 'something went wrong',
     details: []
   };
 
@@ -33,12 +34,24 @@ class PropertiesStore {
   }
 
   @action createProperty(jsonInput) {
-    this.properties.insertStatus = "loading";
+    console.log('jsonInput: ', jsonInput);
+    this.properties.insertStatus = 'loading';
     this.postProperty(jsonInput)
       .then(result => {
         runInAction(() => {
-          this.properties.details.push(result);
-          this.properties.insertStatus = "done";
+          if (result.status === 400) {
+            this.properties.insertStatus = 'error';
+            this.properties.errorMessage = 'Please make sure you entered valid inputs'
+            return;
+          }
+          if (result.status === 500) {
+            this.properties.insertStatus = 'error'
+            this.properties.errorMessage = 'Something went wrong';
+            return;
+          } else {
+            this.properties.details.push(result);
+            this.properties.insertStatus = 'done';
+          }
         });
       })
       .catch(err => {
@@ -58,16 +71,9 @@ class PropertiesStore {
 
   postProperty(jsonInput) {
     return axios.post("api/contribute", jsonInput).then(response => {
-      if (response.status === 400 || response.status === 500) {
-        return Promise.reject(
-          new Error(
-            "Invalid Please make sure you entered the right data form ..."
-          )
-        );
-      }
 
       return response.data;
-    });
+    }).catch((err) => err.response);
   }
 
   convertHandler = () => {

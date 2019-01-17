@@ -44,9 +44,7 @@ class InsertForm extends React.Component {
     return (
       <div className="insert-form">
         {PropertiesStore.properties.insertStatus === "error" ? (
-          <p className="error">Please make sure you entered valid inputs</p>
-        ) : PropertiesStore.properties.insertStatus === "done" ? (
-          <p className="succeed">Valid!</p>
+          <p className="error">{PropertiesStore.properties.errorMessage} <a href='www.google.com'>see our guide</a>.</p>
         ) : null}
         <form onSubmit={e => this.insertJson(e)}>
           {TYPES.map((type, i) => {
@@ -80,12 +78,13 @@ class InsertForm extends React.Component {
                 onChange={e => this.handleChange(e)}
               />
               <label className="custom-file-label" htmlFor="customFile">
-                Choose file
+                {/* TODO change the text to the file name after uploading the file */}
+                {this.clicked ? this.file.name : 'Choose file'}
               </label>
             </div>
           )}
           {state.type === "url" && (
-            <input
+            <inpu
               type="url"
               className="form-control"
               placeholder="Enter api for JSON url"
