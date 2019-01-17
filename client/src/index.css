@@ -194,9 +194,7 @@ li.active
 }
 .col-auto {
   text-align: center;
-}
-.col-auto {
-  text-align: center;
+  margin-top: 10px;
 }
 .error {
   background: #ffbaba;
