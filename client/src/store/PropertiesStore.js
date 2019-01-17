@@ -5,6 +5,7 @@ class PropertiesStore {
   @observable
   properties = {
     data: [],
+    singleHouse: {},
     status: 'loading',
     result: null,
     fromCurrency: '',
@@ -64,9 +65,13 @@ class PropertiesStore {
     this.properties.step = step;
   }
 
+  @computed get detailsOfHouse() {
+    return this.properties.singleHouse
+  }
+
   @computed
   get propertiesCount() {
-    return this.properties.data.length;
+    return this.properties.data.length
   }
 
   getProperties() {
@@ -78,6 +83,12 @@ class PropertiesStore {
 
       return response.data;
     }).catch((err) => err.response);
+  }
+
+  getSingleHouse(id) {
+    return fetch(`api/house?id=${id}`)
+      .then(response => response.json())
+      .catch(err => console.log('line 70 store', err))
   }
 
   convertHandler = () => {

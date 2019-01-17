@@ -5,7 +5,7 @@ const moment = require('moment');
 
 const { readJsonFile, fetchJsonURL, handleResultsOfPromises, reconizeFileUpload } = require('../utils/helpers');
 
-const db = require('../db/');
+const db = require('../db/')
 
 router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next) => {
   let { price_min = 0, price_max = Number.MAX_SAFE_INTEGER, order = 'market_date_asc', page = 1, rooms = 0 } = query;
@@ -75,9 +75,9 @@ router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next)
     let countryCity = await db.queryPromise('select distinct location_city, location_country from property')
     return res.json({ data, total, countryCity });
   } catch (err) {
-    return next(err);
+    return next(err)
   }
-});
+})
 
 router.get('/city-name', cors(), async (req, res, next) => {
   try {
@@ -120,58 +120,70 @@ router.get('/stats', cors(), async (req, res, next) => {
   }
 });
 
-const upload = reconizeFileUpload();
+const upload = reconizeFileUpload()
 router.post(
   '/contribute',
   upload.single('selectedFile'),
   async (req, res, next) => {
     try {
-      const { url, json, type } = req.body;
-      let data;
+      const { url, json, type } = req.body
+      let data
 
       switch (type) {
         case 'url':
-          data = await fetchJsonURL(url);
-          break;
+          data = await fetchJsonURL(url)
+          break
         case 'json':
           data = JSON.parse(json);
           break;
         case 'file':
-          const xx = req.file.path;
+          const xx = req.file.path
 
-          const myFile = './' + xx;
+          const myFile = './' + xx
 
-          const deleteFile = (file) => {
-            fs.unlink(file, (err) => {
-              if (err) throw err;
-            });
-          };
+          const deleteFile = file => {
+            fs.unlink(file, err => {
+              if (err) throw err
+            })
+          }
 
           setTimeout(() => {
-            deleteFile(myFile);
-          }, 30 * 6000);
+            deleteFile(myFile)
+          }, 30 * 6000)
 
           data = await readJsonFile(myFile);
           break;
         default:
-          return next(new Error(`Unsupported type "${type}"`));
+          return next(new Error(`Unsupported type "${type}"`))
       }
 
       if (!data || !Array.isArray(data) || !data.length) {
-        res.status(400);
+        res.status(400)
 
-        throw new Error('Wrong data');
+        throw new Error('Wrong data')
       }
 
-      await handleResultsOfPromises(data, res);
+      await handleResultsOfPromises(data, res)
     } catch (err) {
-      return next(err);
+      return next(err)
     }
   }
-);
+)
+
+router.get('/house', cors(), async (req, res, next) => {
+  try {
+    const { id } = req.query
+    const query = `SELECT * FROM property WHERE id=${id}`
+    const result = await db.queryPromise(query)
+
+    return res.json(result)
+  } catch (err) {
+    return next(err)
+  }
+})
 
 router.use('*', (req, res, next) => {
-  return res.status(404).end();
-});
+  return res.status(404).end()
+})
 
 module.exports = router;
