@@ -6,12 +6,14 @@ import Contribute from "../components/contribution/Contribute";
 import NoMatch from "../components/NoMatch";
 import CityChart from '../components/stats/CityChart';
 import HouseDetails from '../components/houseDetails'
+import CurrencyConverter from "../components/currencyConverter"
 
 class Index extends React.Component {
   render() {
     return (
       <Router>
         <div>
+          <CurrencyConverter />
           <ul className="navbar">
             <li>
               <NavLink

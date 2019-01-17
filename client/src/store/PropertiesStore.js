@@ -9,7 +9,7 @@ class PropertiesStore {
     status: 'loading',
     result: null,
     fromCurrency: '',
-    toCurrency: '',
+    toCurrency: 'EUR',
     amount: 1,
     currencies: [],
     total: 0,
@@ -21,8 +21,8 @@ class PropertiesStore {
 
   @action
   listProperties() {
-    this.properties.status = 'loading'
-    this.getProperties()
+    this.properties.status = "loading";
+    this.getProperties(this.properties.toCurrency)
       .then(properties => {
         runInAction(() => {
           console.log(properties);
@@ -101,8 +101,8 @@ class PropertiesStore {
     return this.properties.data.length
   }
 
-  getProperties() {
-    return fetch('api/properties').then(response => response.json());
+  getProperties(currency) {
+    return fetch("api/properties?currency=" + currency).then(response => response.json());
   }
 
   postProperty(jsonInput) {
@@ -135,6 +135,7 @@ class PropertiesStore {
 
   selectHandler = event => {
     this.properties.toCurrency = event.target.value;
+    this.listProperties()
   };
 }
 const store = new PropertiesStore();
