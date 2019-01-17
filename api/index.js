@@ -3,7 +3,13 @@ const cors = require('cors');
 const fs = require('fs');
 const moment = require('moment');
 
-const { readJsonFile, fetchJsonURL, handleResultsOfPromises, reconizeFileUpload } = require('../utils/helpers');
+const {
+  readJsonFile,
+  fetchJsonURL,
+  handleResultsOfPromises,
+  reconizeFileUpload,
+  createNewDataWithnewCurrencies
+} = require('../utils/helpers');
 
 const db = require('../db/')
 

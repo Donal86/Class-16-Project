@@ -4,6 +4,7 @@ const fs = require("fs");
 const fetch = require("node-fetch");
 const multer = require("multer");
 const db = require("../db/");
+const readyCurrencyData = require("../utils/currenciesOfToday.json");
 
 const { validation } = require("./validateProperty");
 const { normalization } = require("./normalizeProperty");
@@ -274,6 +275,50 @@ function reconizeFileUpload() {
   return upload;
 }
 
+function isTheDateTodayChecker() {
+  const oldDate = new Date(readyCurrencyData.date).toDateString();
+  const today = new Date().toDateString();
+  const datesAreSame = today === oldDate;
+  return datesAreSame;
+}
+
+async function currencyDataFetcher() {
+  if (isTheDateTodayChecker() === false) {
+    await fetch("https://api.openrates.io/latest")
+      .then(res => res.json())
+      .then(data => {
+        data["date"] = new Date().toDateString();
+        data.rates["EUR"] = 1;
+        fs.writeFile(
+          "./utils/currenciesOfToday.json",
+          JSON.stringify(data),
+          function (err) {
+            if (err) {
+              return console.log(err);
+            }
+            console.log("The new data of currency rates has fetched succesfully.");
+          }
+        );
+      })
+      .catch(err => {
+        throw err;
+      });
+  } else {
+    console.log("The data of currency rates has fetched today once, you are using former data");
+  }
+}
+
+async function createNewDataWithnewCurrencies(result, currency) {
+  await currencyDataFetcher();
+
+  result.forEach(x => {
+    const rates = readyCurrencyData.rates
+    x.price_value = Number((x.price_value * rates[currency] / rates[x.price_currency]).toFixed(2));
+    x.price_currency = currency
+  });
+  return result;
+}
+
 module.exports = {
   housesArrayProduce,
   insertIntoDatabase,
@@ -283,5 +328,6 @@ module.exports = {
   loopInValidation,
   isEmptyObject,
   handleResultsOfPromises,
-  reconizeFileUpload
+  reconizeFileUpload,
+  createNewDataWithnewCurrencies
 };
