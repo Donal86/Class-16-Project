@@ -96,7 +96,9 @@ class MainMap extends React.Component {
       return `<div class='balloon'> <a href=${'http://localhost:3000/house?id=' +
         item.id}> <h3>${item.price_value} ${
         item.price_currency
-      }</h3> <img src=${!item.images ? null : item.images[0]}/> </a> </div>`
+      }</h3> <img src=${
+        !item.images ? null : item.images.split(',')[0]
+      }/> </a> </div>`
     }
 
     // all placemarkers are here. I created it with map function
