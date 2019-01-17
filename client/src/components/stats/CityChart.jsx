@@ -21,14 +21,14 @@ class CityChart extends Component {
 					borderDash: [],
 					borderDashOffset: 0.0,
 					borderJoinStyle: 'miter',
-					pointBorderColor: 'rgba(75,192,192,1)',
-					pointBackgroundColor: '#fff',
+					pointBorderColor: 'rgba(0, 51, 0,0.5)',
+					pointBackgroundColor: 'rgba(110, 180, 0,0.4)',
 					pointBorderWidth: 1,
-					pointHoverRadius: 5,
+					pointHoverRadius: 4,
 					pointHoverBackgroundColor: 'rgba(110, 180, 0,1)',
 					pointHoverBorderColor: 'rgba(220,220,220,1)',
 					pointHoverBorderWidth: 2,
-					pointRadius: 1,
+					pointRadius: 5,
 					pointHitRadius: 10
 				}
 			]
@@ -47,14 +47,14 @@ class CityChart extends Component {
 					borderDash: [],
 					borderDashOffset: 0.0,
 					borderJoinStyle: 'miter',
-					pointBorderColor: 'rgba(75,192,192,1)',
-					pointBackgroundColor: '#fff',
+					pointBorderColor: 'rgba(255, 51, 0,0.5)',
+					pointBackgroundColor: 'rgba(255, 104, 0,0.4)',
 					pointBorderWidth: 1,
-					pointHoverRadius: 5,
+					pointHoverRadius: 4,
 					pointHoverBackgroundColor: 'rgba(255, 104, 0,1)',
 					pointHoverBorderColor: 'rgba(220,220,220,1)',
 					pointHoverBorderWidth: 2,
-					pointRadius: 1,
+					pointRadius: 5,
 					pointHitRadius: 10
 				}
 			]
@@ -131,13 +131,17 @@ class CityChart extends Component {
 			}
 		});
 
+		const daysNewFormat = days.map(day => {
+			return day = moment(day).format("MMM Do YY")
+		})
+
 		const { sqrmChartData, priceChartData } = this.state;
 		this.setState({
 			sqrmChartData: {
-				...sqrmChartData, labels: days, datasets: [{ ...sqrmChartData.datasets[0], label: 'Per-Sqrm', data: avgPriceSqrArray }]
+				...sqrmChartData, labels: daysNewFormat, datasets: [{ ...sqrmChartData.datasets[0], label: 'Per-Sqrm', data: avgPriceSqrArray }]
 			},
 			priceChartData: {
-				...priceChartData, labels: days, datasets: [{ ...priceChartData.datasets[0], label: 'Per-Property', data: avgPriceDataArray }]
+				...priceChartData, labels: daysNewFormat, datasets: [{ ...priceChartData.datasets[0], label: 'Per-Property', data: avgPriceDataArray }]
 			}
 		});
 	};
@@ -159,9 +163,18 @@ class CityChart extends Component {
 		const {
 			selectedOption, priceChartData, sqrmChartData, priceChartTitle, sqrChartTitle, options } = this.state;
 
-		const chartHeader = typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? `Properties price trend in selected city for the last 10 days ...` : `Properties price trend in ${selectedOption.value} for the last 10 days ...`;
+		const chartDivStyle = selectedOption === null ? {
+			display: "none"
+		} : { display: "" }
+
+		const imageStyle = selectedOption === null ? {
+			display: "block", maxWidth: "500px", marginLeft: "auto", marginRight: "auto", marginTop: "80px", marginBottom: "50px", borderRadius: "10px"
+		} : { display: "none" }
+
+		const chartHeader = typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? `Select a city to display average price charts for properties and per Sqrm for the last 10 days...` : `Properties price trend in ${selectedOption.value} for the last 10 days ...`;
+
 		return (
-			<div className="container">
+			<React.Fragment >
 				<Select
 					className="select-main"
 					value={selectedOption}
@@ -170,11 +183,11 @@ class CityChart extends Component {
 					placeholder="Select City..."
 				/>
 				<h2 className="price-heading">{chartHeader}</h2>
-				<div className="charts-div"><div className="test"><DrawChart data={priceChartData} text={priceChartTitle} /></div>
+				<img style={imageStyle} src="https://i.postimg.cc/GtN0HkZd/man-pointing-to-chart-600x400.gif" alt="man pointing to chart"></img>
+				<div className="charts-div" style={chartDivStyle} ><div className="test"><DrawChart data={priceChartData} text={priceChartTitle} /></div>
 					<div className="test"><DrawChart data={sqrmChartData} text={sqrChartTitle} /></div>
 				</div>
-
-			</div>
+			</React.Fragment>
 		);
 	}
 }
