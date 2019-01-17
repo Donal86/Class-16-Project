@@ -75,7 +75,7 @@ class MainMap extends React.Component {
         //when clicked a placemarker, you are going to see this content.
         //in the next step, I am going to add <a> for the detailed properties of each house
         const balloonContent = function (item) {
-            return `<div class='balloon'> <a href=${'http://localhost:3000/house?id=' + item.id}> <h3>${item.price_value} ${item.price_currency}</h3> <img src=${item.images ? item.images[0] : null}/> </a> </div>`
+            return `<div class='balloon'> <a href=${'http://localhost:3000/house?id=' + item.id}> <h3>${item.price_value} ${item.price_currency}</h3> <img src=${item.images ? item.images.split(',')[0] : null}/> </a> </div>`
         }
 
         //all placemarkers are here. I created it with map function
