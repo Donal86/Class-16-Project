@@ -17,7 +17,7 @@ class PropertiesStore {
   @action
   listCurrencies() {
     axios
-      .get('http://api.openrates.io/latest')
+      .get('https://api.openrates.io/latest')
       .then(response => {
         const currencyAr = ['EUR'];
         for (const key in response.data.rates) {
@@ -40,7 +40,7 @@ class PropertiesStore {
 
   convertHandler = () => {
     axios
-      .get(`http://api.openrates.io/latest?base=${this.properties.fromCurrency}&symbols=${this.properties.toCurrency}`)
+      .get(`https://api.openrates.io/latest?base=${this.properties.fromCurrency}&symbols=${this.properties.toCurrency}`)
       .then(response => {
         this.properties.data.forEach(x => {
           x.price_value = (x.price_value * response.data.rates[this.properties.toCurrency]).toFixed(2);
