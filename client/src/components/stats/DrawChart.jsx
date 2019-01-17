@@ -5,15 +5,15 @@ class DrawChart extends Component {
 	state = {
 		width: 275,
 		options: {
-			backgroundColor: 'red',
+			responsive: true,
 			title: {
 				display: true,
-				fontSize: 25
+				fontSize: 20,
 			},
 			layout: {
 				padding: {
-					left: 50,
-					right: 50,
+					left: 40,
+					right: 40,
 					top: 0,
 					bottom: 50
 				}
@@ -21,11 +21,35 @@ class DrawChart extends Component {
 			legend: {
 				display: true,
 				labels: {
-					fontColor: '#000'
+					fontColor: '#000',
+					fontSize: 13
 				}
 			},
 			tooltips: {
-				enabled: true
+				enabled: true,
+				mode: 'index',
+				intersect: false,
+			},
+			hover: {
+				mode: 'nearest',
+				intersect: true,
+
+			},
+			scales: {
+				xAxes: [{
+					display: true,
+					scaleLabel: {
+						display: true,
+						labelString: 'Days',
+					}
+				}],
+				yAxes: [{
+					display: true,
+					scaleLabel: {
+						display: true,
+						labelString: 'Average'
+					},
+				}]
 			}
 		}
 	};
