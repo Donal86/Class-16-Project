@@ -312,11 +312,21 @@ async function createNewDataWithnewCurrencies(result, currency) {
   await currencyDataFetcher();
 
   result.forEach(x => {
-    const rates = readyCurrencyData.rates
-    x.price_value = Number((x.price_value * rates[currency] / rates[x.price_currency]).toFixed(2));
-    x.price_currency = currency
+    const rates = readyCurrencyData.rates;
+    x.price_value = Number(
+      ((x.price_value * rates[currency]) / rates[x.price_currency]).toFixed(2)
+    );
+    x.price_currency = currency;
   });
-  return result;
+
+  const validatedData = result.filter(x => isNaN(x.price_value) === false);
+  const unValidatedData = result.filter(x => isNaN(x.price_value) === true);
+  console.log(
+    `${
+    unValidatedData.length
+    } houseData can not converted to selected currency because of their invalid currency entries`
+  );
+  return validatedData;
 }
 
 module.exports = {
