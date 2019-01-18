@@ -13,7 +13,8 @@ class PropertiesStore {
     currencies: [],
     total: 0,
     insertStatus: "loading",
-    errorMessage: 'something went wrong',
+    errorCode: 200,
+    step: 'form',
     details: []
   };
 
@@ -34,19 +35,18 @@ class PropertiesStore {
   }
 
   @action createProperty(jsonInput) {
-    console.log('jsonInput: ', jsonInput);
     this.properties.insertStatus = 'loading';
     this.postProperty(jsonInput)
       .then(result => {
         runInAction(() => {
           if (result.status === 400) {
             this.properties.insertStatus = 'error';
-            this.properties.errorMessage = 'Please make sure you entered valid inputs'
+            this.properties.errorCode = 400;
             return;
           }
           if (result.status === 500) {
             this.properties.insertStatus = 'error'
-            this.properties.errorMessage = 'Something went wrong';
+            this.properties.errorCode = 500;
             return;
           } else {
             this.properties.details.push(result);
@@ -58,6 +58,13 @@ class PropertiesStore {
         console.log("err: ", err);
         this.properties.insertStatus = "error";
       });
+  }
+  @action changeStep(step) {
+    console.log('step: ', step);
+    console.log('this.properties.step: ', this.properties.step);
+    this.properties.step = step;
+    console.log('this.properties.step: ', this.properties.step);
+
   }
 
   @computed
