@@ -9,7 +9,7 @@ class PropertiesStore {
     status: 'loading',
     result: null,
     fromCurrency: '',
-    toCurrency: 'EUR',
+    toCurrency: localStorage.getItem("toCurrency"),
     amount: 1,
     currencies: [],
     total: 0,
@@ -96,6 +96,22 @@ class PropertiesStore {
     return this.properties.singleHouse
   }
 
+  @action
+  listCurrencies() {
+    axios
+      .get('https://api.openrates.io/latest')
+      .then(response => {
+        const currencyAr = ['EUR'];
+        for (const key in response.data.rates) {
+          currencyAr.push(key);
+        }
+        this.properties.currencies = currencyAr.sort();
+      })
+      .catch(err => {
+        console.log(err.message);
+      });
+  }
+
   @computed
   get propertiesCount() {
     return this.properties.data.length
@@ -135,7 +151,8 @@ class PropertiesStore {
 
   selectHandler = event => {
     this.properties.toCurrency = event.target.value;
-    this.listProperties()
+    localStorage.setItem("toCurrency", event.target.value);
+    this.listProperties();
   };
 }
 const store = new PropertiesStore();
