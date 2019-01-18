@@ -1,5 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
+import { FaChevronLeft } from "react-icons/fa";
+import ReactJson from 'react-json-view';
 
 @inject("PropertiesStore")
 @observer
@@ -7,6 +9,10 @@ class ResultsTable extends React.Component {
   state = {
     limit: 2,
   };
+
+  goBack = () => {
+    this.props.PropertiesStore.changeStep('form');
+  }
   LoadMore = () => {
     this.setState({
       limit: this.state.limit + 3
@@ -29,33 +35,34 @@ class ResultsTable extends React.Component {
       );
     const tableElements = PropertiesStore.properties.details.map(
       (el, index) => (
-        <div key={index}>
+        <div className="result-div" key={index}>
           <div>
-            <p>
-              <strong>valid:</strong>
-            </p>
-            <p>{el.insertedItems}</p>
+            <span>
+              <strong>Valid: </strong>
+            </span>
+            <span>{el.insertedItems}</span>
+            <hr />
           </div>
           <div>
-            <p>
-              <strong>failed:</strong>
-            </p>
-            <p>{el.errors}</p>
+            <span>
+              <strong>Failed: </strong>
+            </span>
+            <span>{el.errors}</span>
+            <hr />
           </div>
           <div>
-            <strong>details:</strong>
+            <strong>Details:</strong>
             {el.errMessages.length ? (
               el.errMessages.slice(0, this.state.limit).map((msg, i) => (
-                <div key={i}>
-                  <p>
-                    <span>error message: </span>
-                    {msg.messages}
-                  </p>
-                  <pre>{JSON.stringify(msg.raw, null, 4)}</pre>
+                <div className="error-msg" key={i}>
+                  <span className="red-color">Error message: </span>
+                  {msg.messages}
+                  <ReactJson src={msg.raw} name={false} enableClipboard={false} displayDataTypes={false} />
+                  <hr />
                 </div>
               ))
             ) : (
-                <span>All valid</span>
+                <span> All valid</span>
               )}
           </div>
         </div>
@@ -63,6 +70,9 @@ class ResultsTable extends React.Component {
     );
     return (
       <div className="pages">
+        <div className="guide-link-div">
+          <button type="button" class="btn btn-dark right" onClick={() => this.goBack()}><FaChevronLeft className="icon" />Back</button>
+        </div>
         <div className="result-table">
           <h4>Results:</h4>
           {tableElements}
