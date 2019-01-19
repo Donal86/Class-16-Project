@@ -43,14 +43,17 @@ function hasAllProperties(obj) {
 function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 const DATE_FORMAT = "YYYY-MM-DD";
 
 function dateValidation(date) {
   const now = moment();
   const parsed = moment(date, DATE_FORMAT, true);
-
-  return parsed.isValid() && !parsed.isAfter(now);
+  const newDate = new Date(date);
+  const isValid = moment(newDate).isValid();
+  if (isValid && !moment(newDate).isAfter(now)) return true;
+  else return parsed.isValid() && !parsed.isAfter(now);
 }
 
 // Check a valid string like address or country
