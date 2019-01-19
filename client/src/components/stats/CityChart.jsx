@@ -83,13 +83,13 @@ class CityChart extends Component {
 	getCitiesName = async () => {
 		return await fetch(` http://localhost:3123/api/city-name`)
 			.then(res => {
-				if (res.status === 404) {
-					this.setState({ noCities: true })
-				} else {
-					return res.json().then((cities) => {
-						this.groupCitiesForSelect(cities);
-					})
-				}
+				res.json().then(result => {
+					if (!result.length) {
+						this.setState({ noCities: true })
+					} else {
+						this.groupCitiesForSelect(result);
+					}
+				})
 			})
 			.catch((err) => console.log(err));
 	};
@@ -166,7 +166,7 @@ class CityChart extends Component {
 	startFetchRequest = async (city) => {
 		return await fetch(`http://localhost:3123/api/stats?city=${city}`, {})
 			.then((res) => res.json())
-			.then((data) => data.length < 1 ? this.setState({ noData: true }) : this.updateState(data))
+			.then((data) => !data.length ? this.setState({ noData: true }) : this.updateState(data))
 			.catch((err) => console.log(err));
 	}
 
@@ -186,8 +186,8 @@ class CityChart extends Component {
 		const imageClass = selectedOption === null ? "image-display" : "image-not-display"
 		const headerDisplayInWrongEntry = cityNotFound ? { display: "none" } : { display: "" }
 
-		const chartHeader = noCities && selectedOption === null ? <h2 className="no-cities">Sorry no cities available now</h2>
-			: typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? <h2 className="price-heading" style={headerDisplayInWrongEntry}> Select a city from the<span className="list-word"> list</span> to display average price charts per property and Sqrm for the last 10 days...</h2>
+		const chartHeader = noCities && selectedOption === null ? <h2 className="no-cities">Sorry, city list is empty. No data available now</h2>
+			: noData ? <h2 className="no-data">Sorry no available data for your selection ...  </h2> : typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? <h2 className="price-heading" style={headerDisplayInWrongEntry}> Select a city from the<span className="list-word"> list</span> to display average price charts per property and Sqrm for the last 10 days...</h2>
 				: <h2 className="price-heading">Price trend in {selectedOption.value} for the last 10 days ...</h2>;
 
 		const renderError = cityNotFound ? <h2 className="wrong-entry-header">Wrong Entry... Please select from the list</h2> : ""

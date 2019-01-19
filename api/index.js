@@ -113,14 +113,12 @@ router.get('/city-name', cors(), async (req, res, next) => {
   try {
     const sql = `select city from city_status group by city order by city ASC;`
     const result = await db.queryPromise(sql);
-    if (!result.length) {
-      res.status(404).json(result);
-    }
-    else return res.json(result);
+    return res.json(result);
   } catch (error) {
     return next(error);
   }
 });
+
 router.get('/stats', cors(), async (req, res, next) => {
   try {
     const city = req.query.city || null;
@@ -130,10 +128,7 @@ router.get('/stats', cors(), async (req, res, next) => {
     } else { queryWhere = `WHERE city = "${null}"`; }
     const sql = `SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_status ${queryWhere} GROUP BY market_date;`
     const result = await db.queryPromise(sql);
-
-    if (result.length < 1) {
-      res.status(404).json(result)
-    } else return res.json(result);
+    return res.json(result);
   } catch (error) {
     return next(error);
   }

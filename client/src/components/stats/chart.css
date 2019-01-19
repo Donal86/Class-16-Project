@@ -13,10 +13,9 @@
 .no-data {
 	text-align: center;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 22px;
 	padding: 10px;
 	margin-top: 50px;
-	color: #ff0000;
+	color: gray;
 }
 .test{
 	width:50%;
@@ -39,5 +38,6 @@ display: flex
 	display:none;
 }
 .no-cities{
-	color:gray; text-align: center
+	color:gray; text-align: center;
+		font-family: Arial, Helvetica, sans-serif;
 }
