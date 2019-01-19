@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import "bootstrap/dist/css/bootstrap.css";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { Provider } from "mobx-react";
 import PropertiesStore from "./store/PropertiesStore";
-import "bootstrap/dist/css/bootstrap.css";
 
 const Root = (
   <Provider PropertiesStore={PropertiesStore}>

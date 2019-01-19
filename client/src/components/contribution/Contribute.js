@@ -15,11 +15,9 @@ class Contribute extends React.Component {
         <InsertForm />
       );
     return (
-      <div className="pages">
+      <div className="page-contribute">
         <h2>Contribute with us! add your properties</h2>
-        <div className="container">
-          {insertResults}
-        </div>
+        {insertResults}
       </div>
     );
   }

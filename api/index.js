@@ -115,7 +115,7 @@ router.post('/contribute', upload.single('selectedFile'), async (req, res, next)
         data = await fetchJsonURL(url);
         break;
       case 'json':
-        data = json;
+        data = JSON.parse(json);
         break;
       case 'file':
         const xx = req.file.path;
