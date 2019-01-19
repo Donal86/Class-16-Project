@@ -50,15 +50,25 @@ function housesArrayProduce(houses) {
   return qurArr;
 }
 
+// status table &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
 function extractCities(houses) {
-  const citiesArr = houses.map((el) => el.location.city);
+  const citiesArr = houses.map((el) => el.location_city);
   const cities = citiesArr.filter(function(item, pos) {
     return citiesArr.indexOf(item) == pos;
   });
   return cities;
 }
 
-function getOneCityStatus(city, houses) {
+function extractDatesOfCity(datesArr) {
+  let uniqueDates = datesArr
+                   .map(s => s.toString())
+                   .filter((s, i, a) => a.indexOf(s) == i)
+                   .map(s => new Date(s));
+  return uniqueDates;
+}
+
+function getOneCityStatus(city, marketDate, houses) {
   let status = {
     city: '',
     marketDate: '',
@@ -66,51 +76,58 @@ function getOneCityStatus(city, houses) {
     totalCount: 0,
     totalM2: 0
   };
-  const cities = extractCities(houses);
-  cities.forEach((place) => {
-    if (city) {
-      if (city === place) {
-        status.city = city;
-        status.marketDate = new Date();
-        let price = 0;
-        let area = 0;
-        houses.forEach((house) => {
-          if (house.location.city === city) {
-            //status.marketDate = new Date (house.market_date);
-            status.totalCount += 1;
-            price += Number(house.price.value);
-            price = price.toFixed(2);
-            price = Number(price);
-            status.totalPrice = price;
-            if (house.size.gross_m2) {
-              area += Number(house.size.gross_m2);
-            } else if (house.size.net_m2) {
-              area += Number(house.size.net_m2);
-            } else area += Number(house.size.parcel_m2);
+  status.city = city;
+  status.marketDate = marketDate;
+  let price = 0;
+  let area = 0;
+  houses.forEach((house, i) => {
+    const myDate = new Date(house.market_date);
+    if (Date.parse(myDate) === Date.parse(marketDate) && house.location_city === city) {
+      status.totalCount += 1;
+      price += Number(house.price_value);
+      price = price.toFixed(2);
+      price = Number(price);
+      status.totalPrice = price;
+      if (house.size_grossm2) {
+        area += Number(house.size_grossm2);
+      } else if (house.size_netm2) {
+        area += Number(house.size_netm2);
+      } else area += Number(house.size_parcelm2);
 
-            area = area.toFixed(2);
-            area = Number(area);
-            status.totalM2 = area;
-          }
-        });
-      }
+      area = area.toFixed(2);
+      area = Number(area);
+      status.totalM2 = area;
     }
   });
   return status;
 }
 
+function getDatesOfCity(city, houses) {
+  let allDates = [];
+  houses.forEach(house => {
+    if(house.location_city === city) {
+      allDates.push(house.market_date);
+    }
+  });
+  const datesUq = extractDatesOfCity(allDates);
+  return datesUq;
+}
+
 function getAllCitiesStatus(houses) {
   let citiesStatus = [];
   const cities = extractCities(houses);
-  cities.forEach((place) => {
-    citiesStatus.push(getOneCityStatus(place, houses));
+  cities.forEach(city => {
+    const uniqueDates = getDatesOfCity(city, houses);
+    uniqueDates.forEach(uqDate => {
+      citiesStatus.push(getOneCityStatus(city, uqDate, houses));
+    });
   });
   return citiesStatus;
 }
 
-function statusArray(data) {
+function statusTable(houses) {
   let qurArray = [];
-  const citiesStatus = getAllCitiesStatus(data);
+  const citiesStatus = getAllCitiesStatus(houses);
   citiesStatus.forEach((place, i) => {
     const { city, marketDate, totalPrice, totalCount, totalM2 } = place;
     qurArray[i] = [city, marketDate, totalPrice, totalCount, totalM2];
@@ -119,7 +136,7 @@ function statusArray(data) {
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%
-async function insertIntoDatabase(report, houses, cityStatus) {
+async function insertIntoDatabase(report, houses) {
   try {
     if (houses.length) {
       let storeHousesQuery =
@@ -132,12 +149,6 @@ async function insertIntoDatabase(report, houses, cityStatus) {
       if (houses.length >= 1) {
         await db.queryPromise(storeHousesQuery, [houses]);
       }
-
-      const statusQuery =
-        'REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?';
-      if (cityStatus.length >= 1) {
-        await db.queryPromise(statusQuery, [cityStatus]);
-      }
     }
 
     return {
@@ -148,6 +159,19 @@ async function insertIntoDatabase(report, houses, cityStatus) {
   } catch (err) {
     throw err;
   }
+}
+
+async function insertDataIntoStatus(data) {
+  try {
+      const statusQuery =
+        'REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?';
+      if (data.length >= 1) {
+        await db.queryPromise(statusQuery, [data]);
+      }
+    }
+    catch (err) {
+      throw err;
+    }
 }
 
 function isEmptyObject(obj) {
@@ -217,9 +241,13 @@ async function handleResultsOfPromises(data, res) {
   const report = loopInValidation(data);
   const filterdData = loopInNormalization(report.validItems);
   const houses = housesArrayProduce(filterdData);
-  const cityStatus = statusArray(filterdData);
+  //const cityStatus = statusArray(filterdData);
+  const responseResult = await insertIntoDatabase(report, houses);
 
-  const responseResult = await insertIntoDatabase(report, houses, cityStatus);
+  const getHouses = 'SELECT * FROM `property`;';
+  const currentData = await db.queryPromise(getHouses);
+  const citiesStatus = statusTable(currentData);
+  await insertDataIntoStatus(citiesStatus);
 
   return res.json(responseResult);
 }
@@ -245,7 +273,6 @@ function reconizeFileUpload() {
 
 module.exports = {
   housesArrayProduce,
-  statusArray,
   insertIntoDatabase,
   readJsonFile,
   fetchJsonURL,
