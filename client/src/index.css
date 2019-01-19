@@ -7,6 +7,15 @@ body
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    
+    max-width: 1100px;
+    margin: auto;
+    padding: 0 10px;
+    min-width: 700px;
+    overflow: auto;
+
+
 }
 
 code
@@ -17,38 +26,46 @@ code
 
 li.active
 {
-    color: #fff;
-    background: red;
 }
 .List-page
 {
-    display: grid;
-    height: 100vh;
-    grid-template-columns: 15em 1fr;
-    grid-template-rows: 95% 5%;
-    grid-template-areas: 'List-sidebar List-main';
+    display: flex;
 }
 .List
 {
-    height: calc(100% / 5);
-    margin: 10px;
     padding: 10px;
-    border: 1px solid #000;
+    margin: 0 -10px;
 }
+.List:hover {
+    background: #f5f5f5;
+}
+.List + .List {
+}
+
 .List-sidebar
 {
-    display: grid;
-    background: #a5a5a5;
-    grid-column: 1;
-    grid-row: 1;
+    width: 225px;
+    margin-right: 20px;
 }
+.List-filters {
+}
+.List-filter {
+    padding-bottom: 15px;
+}
+.List-total {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.List-filter label {
+    display: block;
+    padding: 3px 0;
+    cursor: pointer;
+}
+
 .List-main
 {
-    overflow: auto;
-    height: 100vh;
-    background: #f3f3f3;
-    grid-column: 2;
-    grid-row: 1;
 }
 
 
@@ -56,37 +73,67 @@ li.active
 {
     padding: 1rem;
     text-align: center;
-    border: 1px solid #ededed;
-    background-color: #e6f2f7;
 }
 .List-pagination
 {
-    z-index: 99;
-    display: flex;
-    background: #dcdcdc;
-    grid-column: 1 /span 2;
-    grid-row: 2;
-    justify-content: space-around;
 }
 
 .List-pagination ul
 {
     display: flex;
-    width: 40em;
     list-style-type: none;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 .List-pagination ul li
 {
-    width: 2em;
     cursor: pointer;
     text-align: center;
+    background: #555;
+    color: #fff;
+    border: 2px solid #555;
+    margin: 5px;
+    padding: 3px 5px;
+    min-width: 20px;
 }
-.List-sorting
-{
-    position: absolute;
-    top: 5%;
-    left: 50%;
-    margin: 0, auto;
-    text-align: center;
+
+.List-pagination ul li.active {
+    background: #fff;
+    color: #555;
+}
+
+.List {
+    display: flex;
+    cursor: pointer;
+    color: #555;
+}
+.List:hover {
+
+}
+
+.List-img {
+    margin-right: 10px;
+    width: 200px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.List-img {
+    max-width: 200px;
+    display: block;
+}
+
+.List-info {}
+.List-info > div {
+    margin-bottom: 5px;
+}
+.List-info--rooms {
+    color: #777;
+    
+}
+
+.List-info--price {
+    font-size: 22px;
 }
