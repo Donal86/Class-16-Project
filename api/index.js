@@ -6,26 +6,6 @@ const { readJsonFile, fetchJsonURL, handleResultsOfPromises, reconizeFileUpload 
 
 const db = require('../db/');
 
-const columnsMap = {
-  link: 'link',
-  market_date: 'market_date',
-  location_country: 'location.country',
-  location_city: 'location.city',
-  location_address: 'location.address',
-  location_coordinates_lat: 'location.coordinates.lat',
-  location_coordinates_lng: 'location.coordinates.lng',
-  size_parcelm2: 'size.parcel_m2',
-  size_grossm2: 'size.gross_m2',
-  size_netm2: 'size.net_m2',
-  size_rooms: 'size.rooms',
-  price_value: 'price.value',
-  price_currency: 'price.currency',
-  description: 'description',
-  title: 'title',
-  images: 'images',
-  sold: 'sold'
-};
-
 router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next) => {
   let { price_min = 0, price_max = Number.MAX_SAFE_INTEGER, order = 'market_date_asc', page = 1, rooms = 0 } = query;
   const limit = 5;
@@ -36,7 +16,7 @@ router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next)
   }
   const order_field = order.slice(0, index);
   const order_direction = order.slice(index + 1);
-  console.log(order_field, order_direction);
+
   if (
     !order_field ||
     !order_direction ||
@@ -87,13 +67,12 @@ router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next)
       totalQuery += conditions.join(' and ');
     }
     dataQuery += ` order by ${db.escapeId(order_field, true)} ${order_direction} limit ${limit} offset ${offset}`; // params.push(order_field);
-    // console.log(dataQuery, totalQuery);
     let totalResult = await db.queryPromise(totalQuery, conditionParams);
     const total = totalResult[0].total;
     let dataResult = await db.queryPromise(dataQuery, conditionParams);
     const data = dataResult;
     let countryCity = await db.queryPromise('select distinct location_city, location_country from property')
-    console.log("DOUBLE", countryCity)
+
     return res.json({ data, total, countryCity });
   } catch (err) {
     return next(err);
