@@ -3,7 +3,7 @@ import queryString from 'query-string'
 import MainMap from './MainMap'
 import './houseDetails.css'
 import { toJS } from 'mobx'
-import NotFound from './notfound.png'
+
 import {
   Carousel,
   CarouselItem,
