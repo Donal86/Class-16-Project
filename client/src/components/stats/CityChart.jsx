@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import DrawChart from './DrawChart';
+import queryString from 'query-string';
 import './chart.css';
 import moment from 'moment';
 moment().format();
@@ -63,32 +64,48 @@ class CityChart extends Component {
 		selectedOption: null,
 		priceChartTitle: 'Average price per property',
 		sqrChartTitle: 'Average price per square meter ',
+		noData: false,
+		cityNotFound: false,
+		noCities: false
 	};
 
 	componentDidMount() {
 		this.getCitiesName();
-
-		const cityQuery = this.props.location.search.replace(/(\?city=)(\S)/i, '$2');
+		const parsedQuery = queryString.parse(this.props.location.search);
 		if (this.props.location.search) {
-			if (!(/city/i).test(cityQuery)) {
-				this.setState({ selectedOption: { value: cityQuery, label: cityQuery } })
-				this.linkQuerySelect(cityQuery);
+			if (parsedQuery.city) {
+				this.setState({ selectedOption: { value: parsedQuery.city, label: parsedQuery.city } })
+				this.startFetchRequest(parsedQuery.city);
 			}
-		} else {
-			this.linkQuerySelect(cityQuery);
 		}
 	}
 
 	getCitiesName = async () => {
 		return await fetch(` http://localhost:3123/api/city-name`)
-			.then((res) => res.json())
-			.then((cities) => {
-				this.groupCitiesForSelect(cities);
+			.then(res => {
+				if (res.status === 404) {
+					this.setState({ noCities: true })
+				} else {
+					return res.json().then((cities) => {
+						this.groupCitiesForSelect(cities);
+					})
+				}
 			})
 			.catch((err) => console.log(err));
 	};
 
 	groupCitiesForSelect = (citiesList) => {
+		this.setState({ cityNotFound: false })
+		const parsedQuery = queryString.parse(this.props.location.search);
+		const citiesObjValues = []
+		for (let i = 0; i < citiesList.length; i++) {
+			citiesObjValues.push(citiesList[i].city)
+			if (this.props.location.search) {
+				if (!citiesObjValues.includes(parsedQuery.city)) {
+					this.setState({ cityNotFound: true })
+				} else { this.setState({ cityNotFound: false }) }
+			}
+		}
 		const optionsObj = citiesList.map((option) => ({ value: option.city, label: option.city }));
 		this.setState({
 			options: [...optionsObj],
@@ -146,33 +163,34 @@ class CityChart extends Component {
 		});
 	};
 
-	linkQuerySelect = async (city) => {
+	startFetchRequest = async (city) => {
 		return await fetch(`http://localhost:3123/api/stats?city=${city}`, {})
 			.then((res) => res.json())
-			.then((data) => this.updateState(data))
+			.then((data) => data.length < 1 ? this.setState({ noData: true }) : this.updateState(data))
 			.catch((err) => console.log(err));
 	}
 
 	handleSelectChange = async (selectedOption) => {
-		await this.setState({ selectedOption });
-		this.linkQuerySelect(selectedOption.value)
-		this.props.history.push("?city=" + this.state.selectedOption.value)
+		await this.setState({ selectedOption, noData: false, cityNotFound: false });
+		this.startFetchRequest(selectedOption.value)
+		this.props.history.push('/citychart?city=' + this.state.selectedOption.value)
 	};
 
 	render() {
 		const {
-			selectedOption, priceChartData, sqrmChartData, priceChartTitle, sqrChartTitle, options } = this.state;
+			selectedOption, priceChartData, sqrmChartData, priceChartTitle, sqrChartTitle, options, noData, cityNotFound, noCities } = this.state;
 
-		const chartDivStyle = selectedOption === null ? {
+		const chartDivStyle = selectedOption === null || noData ? {
 			display: "none"
 		} : { display: "" }
+		const imageClass = selectedOption === null ? "image-display" : "image-not-display"
+		const headerDisplayInWrongEntry = cityNotFound ? { display: "none" } : { display: "" }
 
-		const imageStyle = selectedOption === null ? {
-			display: "block", maxWidth: "500px", marginLeft: "auto", marginRight: "auto", marginTop: "80px", marginBottom: "50px", borderRadius: "10px"
-		} : { display: "none" }
+		const chartHeader = noCities && selectedOption === null ? <h2 className="no-cities">Sorry no cities available now</h2>
+			: typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? <h2 className="price-heading" style={headerDisplayInWrongEntry}> Select a city from the<span className="list-word"> list</span> to display average price charts per property and Sqrm for the last 10 days...</h2>
+				: <h2 className="price-heading">Price trend in {selectedOption.value} for the last 10 days ...</h2>;
 
-		const chartHeader = typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? `Select a city to display average price charts for properties and per Sqrm for the last 10 days...` : `Properties price trend in ${selectedOption.value} for the last 10 days ...`;
-
+		const renderError = cityNotFound ? <h2 className="wrong-entry-header">Wrong Entry... Please select from the list</h2> : ""
 		return (
 			<React.Fragment >
 				<Select
@@ -182,8 +200,9 @@ class CityChart extends Component {
 					options={options}
 					placeholder="Select City..."
 				/>
-				<h2 className="price-heading">{chartHeader}</h2>
-				<img style={imageStyle} src="https://i.postimg.cc/GtN0HkZd/man-pointing-to-chart-600x400.gif" alt="man pointing to chart"></img>
+				{chartHeader}
+				{renderError}
+				<img className={imageClass} src="https://i.postimg.cc/GtN0HkZd/man-pointing-to-chart-600x400.gif" alt="man pointing to chart"></img>
 				<div className="charts-div" style={chartDivStyle} ><div className="test"><DrawChart data={priceChartData} text={priceChartTitle} /></div>
 					<div className="test"><DrawChart data={sqrmChartData} text={sqrChartTitle} /></div>
 				</div>

@@ -71,7 +71,7 @@ class Index extends React.Component {
 							}}
 						/>
 						<Route path="/list" component={List} />
-						<Route path="/citychart" component={CityChart} />
+						<Route path="/citychart/:city?" component={CityChart} />
 					</Switch>
 				</div>
 			</Router>
