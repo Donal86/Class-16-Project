@@ -36,6 +36,7 @@ class PropertiesStore {
 
   @action createProperty(jsonInput) {
     this.properties.insertStatus = 'loading';
+    this.properties.details = [];
     this.postProperty(jsonInput)
       .then(result => {
         runInAction(() => {
@@ -60,11 +61,7 @@ class PropertiesStore {
       });
   }
   @action changeStep(step) {
-    console.log('step: ', step);
-    console.log('this.properties.step: ', this.properties.step);
     this.properties.step = step;
-    console.log('this.properties.step: ', this.properties.step);
-
   }
 
   @computed
