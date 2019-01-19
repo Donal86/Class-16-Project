@@ -25,6 +25,15 @@ const columnsMap = {
   images: 'images',
   sold: 'sold'
 };
+router.get('/properties', cors(), async (req, res, next) => {
+  try {
+    const result = await db.queryPromise('select * from `property`;');
+
+    return res.json(result);
+  } catch (err) {
+    return next(err);
+  }
+});
 
 router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next) => {
   let { price_min = 0, price_max = Number.MAX_SAFE_INTEGER, order = 'market_date_asc', page = 1, rooms = 0 } = query;
@@ -100,9 +109,35 @@ router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next)
   }
 });
 
-router.get('/stats', cors(), (req, res) => {
-  res.json({ result: 'GET /api/stats - OK' });
-})
+router.get('/city-name', cors(), async (req, res, next) => {
+  try {
+    const sql = `select city from city_status group by city order by city ASC;`
+    const result = await db.queryPromise(sql);
+    if (!result.length) {
+      res.status(404).json(result);
+    }
+    else return res.json(result);
+  } catch (error) {
+    return next(error);
+  }
+});
+router.get('/stats', cors(), async (req, res, next) => {
+  try {
+    const city = req.query.city || null;
+    let queryWhere = "";
+    if (city) {
+      queryWhere = `WHERE city = "${city}"`;
+    } else { queryWhere = `WHERE city = "${null}"`; }
+    const sql = `SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_status ${queryWhere} GROUP BY market_date;`
+    const result = await db.queryPromise(sql);
+
+    if (result.length < 1) {
+      res.status(404).json(result)
+    } else return res.json(result);
+  } catch (error) {
+    return next(error);
+  }
+});
 
 const upload = reconizeFileUpload();
 router.post('/contribute', upload.single('selectedFile'), async (req, res, next) => {
@@ -122,8 +157,8 @@ router.post('/contribute', upload.single('selectedFile'), async (req, res, next)
 
         const myFile = './' + xx;
 
-        const deleteFile = file => {
-          fs.unlink(file, err => {
+        const deleteFile = (file) => {
+          fs.unlink(file, (err) => {
             if (err) throw err;
           });
         };
@@ -132,7 +167,7 @@ router.post('/contribute', upload.single('selectedFile'), async (req, res, next)
           deleteFile(myFile);
         }, 30 * 6000);
 
-        data = await readJsonFile(myFile);
+        data = await readJsonFile(file);
         break;
       default:
         return next(new Error(`Unsupported type "${type}"`));
