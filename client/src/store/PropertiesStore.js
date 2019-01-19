@@ -35,6 +35,18 @@ class PropertiesStore {
       });
   }
 
+  houseDetails(id) {
+    this.properties.status = 'loading'
+    this.getSingleHouse(id)
+      .then(house => {
+        runInAction(() => {
+          this.properties.singleHouse = house.length < 1 ? null : house
+          this.properties.status = 'done'
+        })
+      })
+      .catch(err => (this.properties.status = 'error'))
+  }
+
   @action createProperty(jsonInput) {
     this.properties.insertStatus = 'loading';
     this.properties.details = [];
