@@ -6,7 +6,7 @@ import { inject, observer } from "mobx-react";
 class MoneyConverter extends React.Component {
   constructor(props) {
     super(props);
-    props.PropertiesStore.listProperties();
+    // props.PropertiesStore.listProperties();
     props.PropertiesStore.listCurrencies();
   }
 
