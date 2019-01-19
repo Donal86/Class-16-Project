@@ -29,11 +29,7 @@ function housesArrayProduce(houses) {
     const net_m2 = size.net_m2 || null;
     qurArr[i] = [
       link,
-<<<<<<< HEAD
-      market_date,
-=======
       marketDate,
->>>>>>> city_status table : market date fixed
       location.country,
       location.city,
       location.address,
@@ -57,13 +53,8 @@ function housesArrayProduce(houses) {
 // status table &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
 function extractCities(houses) {
-<<<<<<< HEAD
-  const citiesArr = houses.map(el => el.location.city);
-  const cities = citiesArr.filter(function (item, pos) {
-=======
   const citiesArr = houses.map((el) => el.location_city);
-  const cities = citiesArr.filter(function(item, pos) {
->>>>>>> city_status table : market date fixed
+  const cities = citiesArr.filter(function (item, pos) {
     return citiesArr.indexOf(item) == pos;
   });
   return cities;
@@ -71,9 +62,9 @@ function extractCities(houses) {
 
 function extractDatesOfCity(datesArr) {
   let uniqueDates = datesArr
-                   .map(s => s.toString())
-                   .filter((s, i, a) => a.indexOf(s) == i)
-                   .map(s => new Date(s));
+    .map(s => s.toString())
+    .filter((s, i, a) => a.indexOf(s) == i)
+    .map(s => new Date(s));
   return uniqueDates;
 }
 
@@ -88,29 +79,6 @@ function getOneCityStatus(city, marketDate, houses) {
     totalCount: 0,
     totalM2: 0
   };
-<<<<<<< HEAD
-  const cities = extractCities(houses);
-  cities.forEach(place => {
-    if (city) {
-      if (city === place) {
-        status.city = city;
-        status.marketDate = new Date();
-        let price = 0;
-        let area = 0;
-        houses.forEach(house => {
-          if (house.location.city === city) {
-            //status.marketDate = new Date (house.market_date);
-            status.totalCount += 1;
-            price += Number(house.price.value);
-            price = price.toFixed(2);
-            price = Number(price);
-            status.totalPrice = price;
-            if (house.size.gross_m2) {
-              area += Number(house.size.gross_m2);
-            } else if (house.size.net_m2) {
-              area += Number(house.size.net_m2);
-            } else area += Number(house.size.parcel_m2);
-=======
   status.city = city;
   status.marketDate = marketDate;
   let price = 0;
@@ -128,7 +96,6 @@ function getOneCityStatus(city, marketDate, houses) {
       } else if (house.size_netm2) {
         area += Number(house.size_netm2);
       } else area += Number(house.size_parcelm2);
->>>>>>> city_status table : market date fixed
 
       area = area.toFixed(2);
       area = Number(area);
@@ -141,7 +108,7 @@ function getOneCityStatus(city, marketDate, houses) {
 function getDatesOfCity(city, houses) {
   let allDates = [];
   houses.forEach(house => {
-    if(house.location_city === city) {
+    if (house.location_city === city) {
       allDates.push(house.market_date);
     }
   });
@@ -152,16 +119,11 @@ function getDatesOfCity(city, houses) {
 function getAllCitiesStatus(houses) {
   let citiesStatus = [];
   const cities = extractCities(houses);
-<<<<<<< HEAD
-  cities.forEach(place => {
-    citiesStatus.push(getOneCityStatus(place, houses));
-=======
   cities.forEach(city => {
     const uniqueDates = getDatesOfCity(city, houses);
     uniqueDates.forEach(uqDate => {
       citiesStatus.push(getOneCityStatus(city, uqDate, houses));
     });
->>>>>>> city_status table : market date fixed
   });
   return citiesStatus;
 }
@@ -190,15 +152,6 @@ async function insertIntoDatabase(report, houses) {
       if (houses.length >= 1) {
         await db.queryPromise(storeHousesQuery, [houses]);
       }
-<<<<<<< HEAD
-
-      const statusQuery =
-        "REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?";
-      if (cityStatus.length >= 1) {
-        await db.queryPromise(statusQuery, [cityStatus]);
-      }
-=======
->>>>>>> city_status table : market date fixed
     }
 
     return {
@@ -213,15 +166,15 @@ async function insertIntoDatabase(report, houses) {
 
 async function insertDataIntoStatus(data) {
   try {
-      const statusQuery =
-        'REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?';
-      if (data.length >= 1) {
-        await db.queryPromise(statusQuery, [data]);
-      }
+    const statusQuery =
+      'REPLACE INTO city_status (city, market_date, total_price, total_count, total_m2) VALUES ?';
+    if (data.length >= 1) {
+      await db.queryPromise(statusQuery, [data]);
     }
-    catch (err) {
-      throw err;
-    }
+  }
+  catch (err) {
+    throw err;
+  }
 }
 
 function isEmptyObject(obj) {

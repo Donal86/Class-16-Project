@@ -45,8 +45,6 @@ function isNumeric(n) {
 }
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-const DATE_FORMAT = "YYYY-MM-DD";
-
 function dateValidation(date) {
   const now = moment();
   const parsed = moment(date, DATE_FORMAT, true);
