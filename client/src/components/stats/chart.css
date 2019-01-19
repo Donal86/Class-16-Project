@@ -18,9 +18,18 @@
 	margin-top: 50px;
 	color: #ff0000;
 }
-.test{
+.chart-box{
 	width:50%;
 }
+@media (max-width: 1400px) {
+	.chart-box {
+		width: 100%;
+	}
+	.charts-div {
+		flex-direction: column;
+	}
+}
+
 .charts-div{
 display: flex
 }

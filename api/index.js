@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const cors = require('cors');
 const fs = require('fs');
+const moment = require('moment');
 
 const { readJsonFile, fetchJsonURL, handleResultsOfPromises, reconizeFileUpload } = require('../utils/helpers');
 
@@ -94,16 +95,26 @@ router.get('/city-name', cors(), async (req, res, next) => {
 router.get('/stats', cors(), async (req, res, next) => {
   try {
     const city = req.query.city || null;
-    let queryWhere = "";
-    if (city) {
-      queryWhere = `WHERE city = "${city}"`;
-    } else { queryWhere = `WHERE city = "${null}"`; }
-    const sql = `SELECT *, format(sum(total_price)/sum(total_count),0) AS averagePrice, format(sum(total_price)/sum(total_m2),0) AS avgSqr FROM city_status ${queryWhere} GROUP BY market_date;`
-    const result = await db.queryPromise(sql);
 
-    if (result.length < 1) {
-      res.status(404).json(result)
-    } else return res.json(result);
+    const sql = `
+      SELECT 
+        *, 
+        format(sum(total_price)/sum(total_count),0) AS averagePrice, 
+        format(sum(total_price)/sum(total_m2),0) AS avgSqr 
+      FROM city_status 
+      WHERE 
+        market_date >= ? and market_date <= ?
+        ${city ? ' and city = ?' : ''}
+      GROUP BY market_date
+    `;
+
+    const d1 = moment().subtract(20, 'd').format('YYYY-MM-DD');
+    const d2 = moment().format('YYYY-MM-DD');
+
+    const result = await db.queryPromise(sql, [d1, d2, city]);
+
+    res.json(result)
+
   } catch (error) {
     return next(error);
   }

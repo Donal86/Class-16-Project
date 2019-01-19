@@ -44,6 +44,7 @@ class Index extends React.Component {
             </li>
             <li>
               <NavLink
+                className="nav-link"
                 to={{ pathname: "citychart" }}
                 exact
                 activeStyle={{ color: "gray" }}

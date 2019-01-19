@@ -6,6 +6,8 @@ import './chart.css';
 import moment from 'moment';
 moment().format();
 
+const CHART_RANGE = 20;
+
 class CityChart extends Component {
 	state = {
 		sqrmChartData: {
@@ -118,18 +120,18 @@ class CityChart extends Component {
 		const avgPriceDataArray = [];
 		const averagesObjByDate = sourceData.map((entry) => {
 			const { avgSqr, market_date, averagePrice } = entry;
-			const date = moment(market_date).format('YYYY-MM-DD');
+			const date = moment(market_date);
 			const avgSqrNum = parseFloat(avgSqr.replace(/,/g, ''));
 			const avgPriceNum = parseFloat(averagePrice.replace(/,/g, ''));
 			return { avgPriceNum, avgSqrNum, date };
 		});
 		allAveragesArray.push(averagesObjByDate);
-		const currentDay = new Date();
-		let daysRangeDisplayed = moment(currentDay).subtract(10, 'd').format('YYYY-MM-DD');
+		const currentDay = moment();
+		let daysRangeDisplayed = moment(currentDay).subtract(20, 'd');
 		const days = [];
 		while (moment(daysRangeDisplayed).isBefore(currentDay)) {
 			days.push(daysRangeDisplayed);
-			daysRangeDisplayed = moment(daysRangeDisplayed).add(1, 'days').format('YYYY-MM-DD');
+			daysRangeDisplayed = moment(daysRangeDisplayed).add(1, 'days');
 		}
 		allAveragesArray.forEach((eachAvgObj) => {
 			let lastAvgSqr = null;
@@ -137,7 +139,7 @@ class CityChart extends Component {
 			let currentIndex = 0;
 			const min = days[0];
 			const max = days[days.length - 1];
-			for (let day = min; day <= max; day = moment(day).add(1, 'days').format('YYYY-MM-DD')) {
+			for (let day = min; day <= max; day = moment(day).add(1, 'days')) {
 				if (day >= eachAvgObj[currentIndex].date) {
 					lastAvgSqr = eachAvgObj[currentIndex].avgSqrNum;
 					lastAvgPrice = eachAvgObj[currentIndex].avgPriceNum;
@@ -149,16 +151,16 @@ class CityChart extends Component {
 		});
 
 		const daysNewFormat = days.map(day => {
-			return day = moment(day).format("MMM Do YY")
+			return day = moment(day).format("MMM D")
 		})
 
 		const { sqrmChartData, priceChartData } = this.state;
 		this.setState({
 			sqrmChartData: {
-				...sqrmChartData, labels: daysNewFormat, datasets: [{ ...sqrmChartData.datasets[0], label: 'Per-Sqrm', data: avgPriceSqrArray }]
+				...sqrmChartData, labels: daysNewFormat, datasets: [{ ...sqrmChartData.datasets[0], label: 'M²', data: avgPriceSqrArray }]
 			},
 			priceChartData: {
-				...priceChartData, labels: daysNewFormat, datasets: [{ ...priceChartData.datasets[0], label: 'Per-Property', data: avgPriceDataArray }]
+				...priceChartData, labels: daysNewFormat, datasets: [{ ...priceChartData.datasets[0], label: 'Property', data: avgPriceDataArray }]
 			}
 		});
 	};
@@ -187,8 +189,8 @@ class CityChart extends Component {
 		const headerDisplayInWrongEntry = cityNotFound ? { display: "none" } : { display: "" }
 
 		const chartHeader = noCities && selectedOption === null ? <h2 className="no-cities">Sorry no cities available now</h2>
-			: typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? <h2 className="price-heading" style={headerDisplayInWrongEntry}> Select a city from the<span className="list-word"> list</span> to display average price charts per property and Sqrm for the last 10 days...</h2>
-				: <h2 className="price-heading">Price trend in {selectedOption.value} for the last 10 days ...</h2>;
+			: typeof this.state.selectedOption === 'undefined' || !priceChartData.datasets[0].data.length ? <h2 className="price-heading" style={headerDisplayInWrongEntry}> Select a city from the<span className="list-word"> list</span> to display average price charts per property and Sqrm for the last {CHART_RANGE} days...</h2>
+				: <h2 className="price-heading">Price trend in {selectedOption.value} for the last {CHART_RANGE} days ...</h2>;
 
 		const renderError = cityNotFound ? <h2 className="wrong-entry-header">Wrong Entry... Please select from the list</h2> : ""
 		return (
@@ -203,8 +205,9 @@ class CityChart extends Component {
 				{chartHeader}
 				{renderError}
 				<img className={imageClass} src="https://i.postimg.cc/GtN0HkZd/man-pointing-to-chart-600x400.gif" alt="man pointing to chart"></img>
-				<div className="charts-div" style={chartDivStyle} ><div className="test"><DrawChart data={priceChartData} text={priceChartTitle} /></div>
-					<div className="test"><DrawChart data={sqrmChartData} text={sqrChartTitle} /></div>
+				<div className="charts-div" style={chartDivStyle}>
+					<div className="chart-box"><DrawChart data={priceChartData} text={priceChartTitle} /></div>
+					<div className="chart-box"><DrawChart data={sqrmChartData} text={sqrChartTitle} /></div>
 				</div>
 			</React.Fragment>
 		);
