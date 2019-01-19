@@ -149,7 +149,6 @@ router.post(
 
       await handleResultsOfPromises(data, res);
     } catch (err) {
-      console.log(err);
       return next(err);
     }
   }
