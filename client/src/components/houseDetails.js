@@ -166,9 +166,11 @@ class HouseDetails extends Component {
       )
     })
     return !link ? (
-      <div className='notFound'>
+        <div className='notFound'>
+            <div>
         House No. {queryString.parse(this.props.location.search).id + ' '}is not
         found
+        </div>
         <img
           className='notFoundImg'
           src={require('./notfound.png')}
