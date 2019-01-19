@@ -105,5 +105,20 @@
   .custom-tag {
     background: black;
   }
- 
+ .notFoundImg{
+   width:200px;
+   margin-top: 30px;
+   
+ }
+ .notFound{
+  transform: translate(-50%, 0%);
+  left:50%;
+  position: absolute;
+  padding: 20px;
+  font-size: 20px;
+ }
+ .notFoundHeader{
+   margin-top:40px;
+   color:red
+ }
 }

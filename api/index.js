@@ -173,10 +173,13 @@ router.post(
 router.get('/house', cors(), async (req, res, next) => {
   try {
     const { id } = req.query
-    const query = `SELECT * FROM property WHERE id=${id}`
-    const result = await db.queryPromise(query)
-
-    return res.json(result)
+    const result = await db.queryPromise(
+      `SELECT * FROM property WHERE id = ?`,
+      [id]
+    )
+    if (result.length < 1) {
+      res.json({ message: 'wrong house id' })
+    } else return res.json(result)
   } catch (err) {
     return next(err)
   }
