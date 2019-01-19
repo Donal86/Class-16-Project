@@ -24,3 +24,20 @@
 .charts-div{
 display: flex
 }
+.list-word{
+	color:red;
+	font-size:25px;
+	font-style: italic
+}
+.wrong-entry-header{
+	color: red; text-align: center
+}
+.image-display{
+	display: block; max-width: 500px; margin-left: auto;margin-right: auto; margin-top: 80px; margin-bottom: 50px; border-radius: 10px
+}
+.image-not-display{
+	display:none;
+}
+.no-cities{
+	color:gray; text-align: center
+}

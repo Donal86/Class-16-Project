@@ -63,7 +63,7 @@ class Index extends React.Component {
             />
             <Route path="/list" exact component={List} />
             <Route path="/contribute" exact component={Contribute} />
-            <Route path="/citychart" component={CityChart} />
+            <Route path="/citychart/:city?" component={CityChart} />
             <Route component={NoMatch} />
           </Switch>
         </div>
