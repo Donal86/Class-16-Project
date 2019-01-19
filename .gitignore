@@ -62,3 +62,7 @@ typings/
 
 # Uploaded file folder
 uploaded-files/
+
+# Lock files
+yarn.lock
+package-lock.json
