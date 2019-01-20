@@ -31,9 +31,9 @@ async function fetchCurrencies() {
 
     } catch (e) {
       if (e.response) {
-        console.log(e.response.status);
+        // console.log(e.response.status);
       } else {
-        console.log(e);
+        // console.log(e);
       }
     }
   }

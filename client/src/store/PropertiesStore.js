@@ -57,8 +57,6 @@ class PropertiesStore {
     this.getProperties(this.properties.toCurrency)
       .then(properties => {
         runInAction(() => {
-          console.log(properties);
-
           this.properties.data = properties.data;
           this.properties.status = 'done'
         })
@@ -100,7 +98,6 @@ class PropertiesStore {
         });
       })
       .catch(err => {
-        console.log("err: ", err);
         this.properties.insertStatus = "error";
       });
   }

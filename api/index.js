@@ -116,7 +116,6 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
           p.price_value_converted = Number((p.price_value * rate).toFixed(2));
         });
     } catch (e) {
-      console.log(e);
       return next(e);
     }
 

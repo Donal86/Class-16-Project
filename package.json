@@ -21,11 +21,13 @@
     "validator": "^10.10.0"
   },
   "scripts": {
-    "start": "./node_modules/.bin/forever start ./index.js",
-    "stop": "./node_modules/.bin/forever stop ./index.js",
-    "start:dev": "./node_modules/.bin/nodemon ./index.js"
+    "start": "node ./index.js",
+    "stop": "npx forever stop ./index.js",
+    "start:dev": "npx nodemon ./index.js",
+    "postinstall": "cd client && rm -rf package-lock.json && npm install && npm run build"
   },
   "devDependencies": {
+    "fs-extra": "^7.0.1",
     "nodemon": "^1.18.9"
   }
 }
