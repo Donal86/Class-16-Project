@@ -20,6 +20,21 @@ class PropertiesStore {
   };
 
   @action
+  listProperties() {
+    this.properties.status = 'loading'
+    this.getProperties()
+      .then(properties => {
+        runInAction(() => {
+          console.log(properties);
+
+          this.properties.data = properties.data;
+          this.properties.status = 'done'
+        })
+      })
+      .catch(err => (this.properties.status = 'error'))
+  }
+
+  @action
   listCurrencies() {
     axios
       .get('https://api.openrates.io/latest')
