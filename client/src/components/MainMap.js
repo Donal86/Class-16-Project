@@ -3,6 +3,7 @@ import './map.css';
 import { YMaps, Map, Clusterer, Placemark, ZoomControl, TypeSelector, Polyline } from "react-yandex-maps";
 import distanceCalculator from '../util/distanceCalculator';
 import { inject, observer } from 'mobx-react';
+import axios from 'axios';
 
 @inject('PropertiesStore')
 @observer
@@ -10,13 +11,38 @@ import { inject, observer } from 'mobx-react';
 class MainMap extends React.Component {
     constructor(props) {
         super(props);
-        props.PropertiesStore.listProperties();
+
+        axios.get('/api/properties?map=1')
+            .then(res => {
+                this.setState({
+                    error: null,
+                    loading: false,
+                    data: res.data.data
+                })
+            })
+            .catch(err => {
+                this.setState({
+                    error: err,
+                    loading: false,
+                    data: []
+                })
+            })
+    }
+
+    state = {
+        data: [],
+        error: null,
+        loading: true
     }
 
     render() {
+        if (this.state.error) return <div>{JSON.stringify(this.state.error, null, 2)}</div>
+
+        if (this.state.loading) return <div>loading...</div>
+
         //it takes all houses' properties as a json file.
-        const { PropertiesStore, theHouse } = this.props;
-        const houses = PropertiesStore.properties.data;
+        const { theHouse } = this.props;
+        const houses = this.state.data;
         let startingCenter = {};
         let zoom = 5;
         let iconOptions = {};
@@ -75,7 +101,14 @@ class MainMap extends React.Component {
         //when clicked a placemarker, you are going to see this content.
         //in the next step, I am going to add <a> for the detailed properties of each house
         const balloonContent = function (item) {
-            return `<div class='balloon'> <a href=${'http://localhost:3000/house?id=' + item.id}> <h3>${item.price_value} ${item.price_currency}</h3> <img src=${item.images ? item.images.split(',')[0] : null}/> </a> </div>`
+            return `
+                <div class='balloon'>
+                    <a href="http://localhost:3000/house?id=${item.id}">
+                        <h3>${item.price_value} ${item.price_currency}</h3>
+                        ${item.images ? `<img src="${item.images.split(',')[0]}" />` : ''}
+                    </a>
+                </div>
+            `
         }
 
         //all placemarkers are here. I created it with map function
@@ -95,36 +128,38 @@ class MainMap extends React.Component {
         )
 
         return (
+            <div className="page-map">
 
-            <YMaps query={{ lang: "en-US" }} >
-                <Map defaultState={{
-                    'center': startingCenter,
-                    'zoom': zoom
-                }}
-                    height={400}
-                    width={1000}
-                >
-
-                    {polylines}
-
-                    <Clusterer options={{
-                        preset: 'islands#invertedVioletClusterIcons',
-                        groupByCoordinates: false
+                <YMaps query={{ lang: "en-US" }} >
+                    <Map defaultState={{
+                        'center': startingCenter,
+                        'zoom': zoom
                     }}
+                        height={400}
+                        width={'100%'}
                     >
-                        {markerHouses}
-                    </Clusterer>
 
-                    <ZoomControl
-                        options={{
-                            size: 'small',
-                            zoomDuration: 1000,
+                        {polylines}
+
+                        <Clusterer options={{
+                            preset: 'islands#invertedVioletClusterIcons',
+                            groupByCoordinates: false
                         }}
-                    />
-                    <TypeSelector defaultState={{ expanded: true }} />
+                        >
+                            {markerHouses}
+                        </Clusterer>
 
-                </Map>
-            </YMaps>
+                        <ZoomControl
+                            options={{
+                                size: 'small',
+                                zoomDuration: 1000,
+                            }}
+                        />
+                        <TypeSelector defaultState={{ expanded: true }} />
+
+                    </Map>
+                </YMaps>
+            </div>
         )
     }
 }

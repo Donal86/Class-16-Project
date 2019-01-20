@@ -25,7 +25,8 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
     price_max = Number.MAX_SAFE_INTEGER,
     order = 'market_date_asc',
     page = 1,
-    rooms = 0
+    rooms = 0,
+    map = 0
   } = query;
 
   let currency = query.currency || headers.currency;
@@ -34,8 +35,8 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
     currency = Object.keys(currencyData)[0]
   }
 
-  const limit = 5;
-  const offset = (page - 1) * limit;
+  const ITEMS_PER_PAGE = 20;
+  const offset = (page - 1) * ITEMS_PER_PAGE;
   const index = order.lastIndexOf('_');
   if (order && order.length < 5 && index === -1) {
     throw new Error(`order param is wrong: ${order}`);
@@ -129,7 +130,9 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
 
     const total = data.length;
 
-    data = data.slice(offset, offset + limit);
+    if (!map) {
+      data = data.slice(offset, offset + ITEMS_PER_PAGE);
+    }
 
     let countryCity = await db.queryPromise('select distinct location_city, location_country from property')
 

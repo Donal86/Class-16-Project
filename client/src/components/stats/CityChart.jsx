@@ -157,10 +157,10 @@ class CityChart extends Component {
 		const { sqrmChartData, priceChartData } = this.state;
 		this.setState({
 			sqrmChartData: {
-				...sqrmChartData, labels: daysNewFormat, datasets: [{ ...sqrmChartData.datasets[0], label: 'M²', data: avgPriceSqrArray }]
+				...sqrmChartData, labels: daysNewFormat, datasets: [{ ...sqrmChartData.datasets[0], label: 'M² price', data: avgPriceSqrArray }]
 			},
 			priceChartData: {
-				...priceChartData, labels: daysNewFormat, datasets: [{ ...priceChartData.datasets[0], label: 'Property', data: avgPriceDataArray }]
+				...priceChartData, labels: daysNewFormat, datasets: [{ ...priceChartData.datasets[0], label: 'Property price', data: avgPriceDataArray }]
 			}
 		});
 	};

@@ -6,11 +6,6 @@ import { SUPPORTED_CURRENCIES } from '../store/PropertiesStore';
 @inject("PropertiesStore")
 @observer
 class CurrencyConverter extends React.Component {
-  constructor(props) {
-    super(props);
-    props.PropertiesStore.listCurrencies();
-  }
-
   render() {
     const { PropertiesStore } = this.props;
 
@@ -18,6 +13,7 @@ class CurrencyConverter extends React.Component {
       <div>
         <div className="Converter">
           <select
+            className="form-control"
             onChange={event => PropertiesStore.selectHandler(event)}
             value={PropertiesStore.properties.toCurrency}
           >

@@ -1,7 +1,7 @@
 .guide-link-div {
-  padding: 3px 0;
-  margin: 20px 0;
-  overflow: auto;
+  flex-grow: 1;
+  text-align: right;
+  line-height: 20px;
 }
 .guide-link {
   float: right;
@@ -14,12 +14,24 @@ h4 {
 }
 .insert-form {
   /* background: rgba(143, 182, 156, 0.8); */
-  background: #bdc3c7;
   padding: 20px;
   text-align: left;
 }
 .custom-control {
   margin-bottom: 8px;
+}
+.custom-radio {
+  display: inline-block;
+  margin-right: 20px;
+  cursor: pointer;
+}
+.insert-form textarea {
+  min-height: 300px;
+  width: 100%;
+}
+.insert-form input[type=url],
+.insert-form input[type=text] {
+  width: 100%;
 }
 .btn-primary {
   margin-top: 8px;
@@ -44,8 +56,8 @@ h4 {
   margin-top: 10px;
 }
 .icon {
-  padding-top: 3px;
-  margin-right: 1px;
+  margin-right: 4px;
+  vertical-align: middle;
 }
 .right {
   float: left;
