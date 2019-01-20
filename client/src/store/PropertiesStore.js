@@ -167,7 +167,7 @@ class PropertiesStore {
 
   selectHandler = event => {
     this.setCurrency(event.target.value)
-    this.listProperties();
+    window.location.reload();
   };
 }
 const store = new PropertiesStore();

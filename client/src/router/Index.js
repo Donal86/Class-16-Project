@@ -8,82 +8,86 @@ import CityChart from '../components/stats/CityChart';
 import HouseDetails from '../components/houseDetails'
 import CurrencyConverter from "../components/currencyConverter"
 import Apidoc from "../components/Apidoc";
-import MainMap from "../components/map/mainMap.js";
+import MainMap from "../components/MainMap";
 
 class Index extends React.Component {
   render() {
     return (
       <Router>
         <div>
-          <CurrencyConverter />
-          <ul className="navbar">
-            <li>
-              <NavLink
-                className="nav-link"
-                to="/"
-                exact
-                activeStyle={{ color: "gray" }}
-              >
-                Home
+          <div className="header">
+            <ul className="navbar">
+              <li>
+                <NavLink
+                  className="nav-link"
+                  to="/"
+                  exact
+                  activeStyle={{ backgroundColor: '#555' }}
+                >
+                  Home
               </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="nav-link"
-                to="/list"
-                exact
-                activeStyle={{ color: "gray" }}
-              >
-                List
+              </li>
+              <li>
+                <NavLink
+                  className="nav-link"
+                  to="/list"
+                  exact
+                  activeStyle={{ backgroundColor: '#555' }}
+                >
+                  List
               </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="nav-link"
-                to="/contribute"
-                exact
-                activeStyle={{ color: "gray" }}
-              >
-                Contribute
+              </li>
+              <li>
+                <NavLink
+                  className="nav-link"
+                  to="/contribute"
+                  exact
+                  activeStyle={{ backgroundColor: '#555' }}
+                >
+                  Contribute
               </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="nav-link"
-                to={{ pathname: "citychart" }}
-                exact
-                activeStyle={{ color: "gray" }}
-              >
-                Display charts
+              </li>
+              <li>
+                <NavLink
+                  className="nav-link"
+                  to="/citychart"
+                  exact
+                  activeStyle={{ backgroundColor: '#555' }}
+                >
+                  Display charts
 							</NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="nav-link"
-                to={{ pathname: "map" }}
-                exact
-                activeStyle={{ color: "gray" }}
-              >
-                Map
+              </li>
+              <li>
+                <NavLink
+                  className="nav-link"
+                  to="/map"
+                  exact
+                  activeStyle={{ backgroundColor: '#555' }}
+                >
+                  Map
               </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="nav-link"
-                to={{ pathname: "doc" }}
-                exact
-                activeStyle={{ color: "gray" }}
-              >
-                Api Documentation
+              </li>
+              <li>
+                <NavLink
+                  className="nav-link"
+                  to="/doc"
+                  exact
+                  activeStyle={{ backgroundColor: '#555' }}
+                >
+                  Api Documentation
               </NavLink>
-            </li>
-          </ul>
+              </li>
+              <li className="nav-currency">
+                <CurrencyConverter />
+              </li>
+            </ul>
+          </div>
           <Switch>
             <Route
               path="/"
               exact
               render={() => {
-                return <h2>Welcome Home</h2>;
+                return <div className="page-home"><h2>Welcome Home</h2></div>;
               }}
             />
             <Route path="/list" exact component={List} />

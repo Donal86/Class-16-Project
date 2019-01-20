@@ -2,7 +2,8 @@ import axios from 'axios';
 import { inject, observer } from 'mobx-react';
 import React from 'react';
 import { Link } from "react-router-dom";
-import HouseMap from "./HouseMap.js";
+
+const ITEMS_PER_PAGE = 20;
 
 @inject("PropertiesStore")
 @observer
@@ -78,7 +79,7 @@ class List extends React.Component {
   };
 
   render() {
-    const pages = Math.ceil(this.state.total / 5);
+    const pages = Math.ceil(this.state.total / ITEMS_PER_PAGE);
 
     const cur = this.props.PropertiesStore.properties.toCurrency;
 
@@ -91,6 +92,7 @@ class List extends React.Component {
               <div className="List-filter">
                 <div className="List-filter-label">Country</div>
                 <select
+                  className="form-control"
                   value={this.params.country}
                   onChange={e => {
                     this.handleChange('country', e.target.value);
@@ -116,6 +118,7 @@ class List extends React.Component {
               <div className="List-filter">
                 <div className="List-filter-label">City</div>
                 <select
+                  className="form-control"
                   value={this.params.city}
                   onChange={e => {
                     this.handleChange('city', e.target.value);
@@ -140,6 +143,7 @@ class List extends React.Component {
               <div className="List-filter">
                 <div className="List-filter-label">Price</div>
                 <input
+                  className="form-control"
                   type='number'
                   value={this.params.price_min}
                   onChange={e => {
@@ -147,6 +151,7 @@ class List extends React.Component {
                   }}
                 />
                 <input
+                  className="form-control"
                   type='number'
                   value={this.params.price_max}
                   onChange={e => {
@@ -161,26 +166,47 @@ class List extends React.Component {
                   onChange={e => {
                     this.handleChange('rooms', e.target.value);
                   }}>
-                  <label>
-                    <input type='radio' name='rooms' value='1' />
-                    1+
-                  </label>
-                  <label>
-                    <input type='radio' name='rooms' value='2' />
-                    2+
-                  </label>
-                  <label>
-                    <input type='radio' name='rooms' value='3' />
-                    3+
-                  </label>
-                  <label>
-                    <input type='radio' name='rooms' value='4' />
-                    4+
-                  </label>
-                  <label>
-                    <input type='radio' name='rooms' value='5' />
-                    5+
-                  </label>
+                  <div className="custom-control custom-radio" style={{ display: 'block' }}>
+                    <input id="rooms1" type='radio' name='rooms' value='1'
+                      className="custom-control-input"
+                    />
+                    <label htmlFor="rooms1" className="custom-control-label">
+                      1+
+                    </label>
+                  </div>
+
+                  <div className="custom-control custom-radio" style={{ display: 'block' }}>
+                    <input id="rooms2" type='radio' name='rooms' value='2'
+                      className="custom-control-input"
+                    />
+                    <label htmlFor="rooms2" className="custom-control-label">
+                      2+
+                    </label>
+                  </div>
+                  <div className="custom-control custom-radio" style={{ display: 'block' }}>
+                    <input id="rooms3" type='radio' name='rooms' value='3'
+                      className="custom-control-input"
+                    />
+                    <label htmlFor="rooms3" className="custom-control-label">
+                      3+
+                    </label>
+                  </div>
+                  <div className="custom-control custom-radio" style={{ display: 'block' }}>
+                    <input id="rooms4" type='radio' name='rooms' value='4'
+                      className="custom-control-input"
+                    />
+                    <label htmlFor="rooms4" className="custom-control-label">
+                      4+
+                    </label>
+                  </div>
+                  <div className="custom-control custom-radio" style={{ display: 'block' }}>
+                    <input id="rooms5" type='radio' name='rooms' value='5'
+                      className="custom-control-input"
+                    />
+                    <label htmlFor="rooms5" className="custom-control-label">
+                      5+
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -189,11 +215,10 @@ class List extends React.Component {
           <div className="List-main">
             {this.state.total === 1 ? <div className="List-total"> Found {this.state.total} house </div> : <div className="List-total"> Found {this.state.total} houses </div>}
 
-            <HouseMap houses={this.props.PropertiesStore.properties.data} />
-
             <div className="List-filter">
               Order by: &nbsp;
               <select
+                className="form-control"
                 value={this.params.order}
                 onChange={e => {
                   this.handleChange('order', e.target.value);

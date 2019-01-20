@@ -1,6 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { FaLink } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const TYPES = ["json", "url", "file"];
 
@@ -50,40 +51,43 @@ class InsertForm extends React.Component {
     const { PropertiesStore } = this.props;
     return (
       <div>
-        <div className="guide-link-div">
-          {/* fake link for now, I'll change it when the guide page is ready! */}
-          <button type="button" class="btn btn-dark guide-link">
-            <FaLink className="icon" />
-            Guide
-            </button>
-        </div>
+
         <div className="insert-form">
           {PropertiesStore.properties.errorCode === 400 ? (
             <p className="error">Please make sure you entered valid inputs <a href='www.google.com'>see our guide</a>.</p>
           ) : PropertiesStore.properties.errorCode === 500 ? (<p className="error">Something went wrong </p>)
               : null}
           <form onSubmit={e => this.insertJson(e)}>
-            {TYPES.map((type, i) => {
-              return (
-                <div
-                  key={i}
-                  className="custom-control custom-radio"
-                  onClick={() => {
-                    this.setState({ type });
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="customRadio"
-                    className="custom-control-input"
-                    checked={type === state.type}
-                  />
-                  <label className="custom-control-label" htmlFor="customRadio2">
-                    {type}
-                  </label>
-                </div>
-              );
-            })}
+            <div style={{ display: 'flex' }}>
+              {TYPES.map((type, i) => {
+                return (
+                  <div
+                    key={i}
+                    className="custom-control custom-radio"
+                    onClick={() => {
+                      this.setState({ type });
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="customRadio"
+                      className="custom-control-input"
+                      checked={type === state.type}
+                    />
+                    <label className="custom-control-label" htmlFor="customRadio2">
+                      {type}
+                    </label>
+                  </div>
+                );
+              })}
+              <div className="guide-link-div">
+                <Link to="/doc">
+                  <FaLink className="icon" />
+                  Guide
+                </Link>
+              </div>
+            </div>
+
             {state.type === "file" && (
               <div className="custom-file">
                 <input
@@ -121,7 +125,7 @@ class InsertForm extends React.Component {
             </div>
           </form>
         </div>
-      </div>
+      </div >
     );
   }
 }
