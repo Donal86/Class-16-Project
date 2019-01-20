@@ -11,10 +11,29 @@ const {
   createNewDataWithnewCurrencies
 } = require('../utils/helpers');
 
+const { getCurrencyData } = require('../utils/currencies');
+
 const db = require('../db/')
 
-router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next) => {
-  let { price_min = 0, price_max = Number.MAX_SAFE_INTEGER, order = 'market_date_asc', page = 1, rooms = 0 } = query;
+
+
+router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, res, next) => {
+  const currencyData = getCurrencyData();
+
+  let {
+    price_min = 0,
+    price_max = Number.MAX_SAFE_INTEGER,
+    order = 'market_date_asc',
+    page = 1,
+    rooms = 0
+  } = query;
+
+  let currency = query.currency || headers.currency;
+
+  if (!currencyData[currency]) {
+    currency = Object.keys(currencyData)[0]
+  }
+
   const limit = 5;
   const offset = (page - 1) * limit;
   const index = order.lastIndexOf('_');
@@ -38,47 +57,82 @@ router.get('/properties/:pampams?', cors(), async ({ query, params }, res, next)
     let totalQuery = `select count(id) as total from property`;
     let conditions = [];
     let conditionParams = [];
+
     if (isNaN(price_min)) {
       res.status(400);
       throw new Error('price_min should be a number');
     } else {
-      conditions.push(`price_value >= ?`);
-      conditionParams.push(parseInt(price_min));
+      // conditions.push(`price_value >= ?`);
+      // conditionParams.push(parseInt(price_min));
     }
     if (isNaN(price_max)) {
       res.status(400);
       throw new Error('price_max should be a number');
     } else {
-      conditions.push(`price_value <= ?`);
-      conditionParams.push(parseInt(price_max));
+      // conditions.push(`price_value <= ?`);
+      // conditionParams.push(parseInt(price_max));
     }
+
     if (query.city) {
       conditions.push(`location_city = ?`);
       conditionParams.push(query.city);
     }
+
     if (query.country) {
       conditions.push(`location_country = ?`);
       conditionParams.push(query.country);
     }
+
     if (rooms) {
       conditions.push(`size_rooms >= ?`);
       conditionParams.push(rooms);
     }
-    if (params.pampams === 'getstatic') {
-      await db.queryPromise('select distinct location_country from property');
-    }
+
     if (conditions.length) {
       dataQuery += ' where ';
       dataQuery += conditions.join(' and ');
       totalQuery += ' where ';
       totalQuery += conditions.join(' and ');
     }
-    dataQuery += ` order by ${db.escapeId(order_field, true)} ${order_direction} limit ${limit} offset ${offset}`; // params.push(order_field);
-    let totalResult = await db.queryPromise(totalQuery, conditionParams);
-    const total = totalResult[0].total;
+
+    // dataQuery += ` order by ${db.escapeId(order_field, true)} ${order_direction} limit ${limit} offset ${offset}`; // params.push(order_field);
+    dataQuery += ` order by ${db.escapeId(order_field, true)} ${order_direction}`; // params.push(order_field);
+
+    // let totalResult = await db.queryPromise(totalQuery, conditionParams);
+    // const total = totalResult[0].total;
+
     let dataResult = await db.queryPromise(dataQuery, conditionParams);
-    const data = dataResult;
+
+    try {
+      dataResult
+        .forEach(p => {
+          const rate = currencyData[currency].rates[p.price_currency];
+
+          if (!rate) {
+            throw new Error(`no rate for price convertion ${p.price_currency} > ${currency}`)
+          }
+
+          p.price_value_converted = Number((p.price_value * rate).toFixed(2));
+        });
+    } catch (e) {
+      console.log(e);
+      return next(e);
+    }
+
+    let data = dataResult.filter(p => {
+      return (
+        p.price_value_converted &&
+        p.price_value_converted >= price_min &&
+        p.price_value_converted <= price_max
+      );
+    })
+
+    const total = data.length;
+
+    data = data.slice(offset, offset + limit);
+
     let countryCity = await db.queryPromise('select distinct location_city, location_country from property')
+
     return res.json({ data, total, countryCity });
   } catch (err) {
     return next(err)

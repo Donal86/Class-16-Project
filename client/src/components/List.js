@@ -78,6 +78,9 @@ class List extends React.Component {
 
   render() {
     const pages = Math.ceil(this.state.total / 5);
+
+    const cur = this.props.PropertiesStore.properties.toCurrency;
+
     return (
       <React.Fragment>
         <div className='List-page'>
@@ -214,7 +217,17 @@ class List extends React.Component {
                       }}>
                       </div>
                       <div className="List-info">
-                        <div className="List-info--price">Price {property.price_value}</div>
+                        <div className="List-info--price">
+                          {property.price_value.toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: property.price_currency,
+                          })}
+                          <br />
+                          {property.price_value_converted.toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: cur,
+                          })}
+                        </div>
                         <div className="List-info--address">
                           {property.location_address} <br />
                           {property.location_city}, {property.location_country}
