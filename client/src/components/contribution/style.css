@@ -1,0 +1,64 @@
+.guide-link-div {
+  flex-grow: 1;
+  text-align: right;
+  line-height: 20px;
+}
+.guide-link {
+  float: right;
+}
+.guide-link:focus {
+    outline: none !important;
+}
+h4 {
+  text-align: left;
+}
+.insert-form {
+  /* background: rgba(143, 182, 156, 0.8); */
+  padding: 20px;
+  text-align: left;
+}
+.custom-control {
+  margin-bottom: 8px;
+}
+.custom-radio {
+  display: inline-block;
+  margin-right: 20px;
+  cursor: pointer;
+}
+.insert-form textarea {
+  min-height: 300px;
+  width: 100%;
+}
+.insert-form input[type=url],
+.insert-form input[type=text] {
+  width: 100%;
+}
+.btn-primary {
+  margin-top: 8px;
+}
+.col-auto {
+  text-align: center;
+  margin-top: 10px;
+}
+.error {
+  background: #ffbaba;
+  color: red;
+  padding: 0 5px;
+}
+.result-div {
+  text-align: left;
+  margin-left: 20px;
+}
+.red-color {
+  color: red;
+}
+.error-msg {
+  margin-top: 10px;
+}
+.icon {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.right {
+  float: left;
+}

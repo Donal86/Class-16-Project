@@ -1,0 +1,97 @@
+
+/* Single house &&&&&&&&&&&&&&&&&&&*/
+.single-house-container {
+  margin: 20px auto;
+}
+.single-house-container hr {
+  margin: 25px 0;
+  border: 3px solid rgb(50, 90, 50);
+  border-radius: 5px;
+}
+.single-house-container .row, .single-house-container .col-sm-6 {
+  margin: 12px 0;
+}
+.custom-tag {
+  max-width: 100%;
+  height: 100%;
+}
+.custom-tag img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+.modal-content {
+  display:inline-block;
+  width: 100%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 0%);
+}
+.modal-dialog{
+  text-align:center;
+  
+}
+.modal-body {
+  position: relative;
+  overflow-y: auto;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  padding: 5px;
+}
+
+.modal-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.mapContainer{
+  display: block;
+  margin: 30px auto;
+}
+
+.mapContainer > div {
+  margin: auto;
+}
+
+/* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+@media screen and (min-width: 480px) {
+  
+  .modal-image {
+    display: block;
+    width: 100%;
+    max-height: 100%;
+  }
+  .modal-content {
+    width: auto;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 0%);
+  }
+  .modal-body {
+    width: auto;
+    height: auto;
+    max-height: 100%;
+    padding: 15px;
+  }
+  .custom-tag {
+    background: black;
+  }
+ .notFoundImg{
+   width:200px;
+   margin-top: 20px;
+   
+ }
+ .notFound{
+  display: block;
+  margin: 0 auto;
+  font-size: 20px;
+ }
+ .notFoundHeader{
+   margin-top:40px;
+   color:red
+ }
+}

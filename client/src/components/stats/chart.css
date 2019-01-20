@@ -1,0 +1,52 @@
+.select-main {
+	padding: 20px;
+	width: 50%;
+	margin-left: 25%;
+}
+.price-heading {
+	color:gray;
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	padding: 5px;
+	margin-bottom: 40px;
+}
+.no-data {
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 22px;
+	padding: 10px;
+	margin-top: 50px;
+	color: #ff0000;
+}
+.chart-box{
+	width:50%;
+}
+@media (max-width: 1400px) {
+	.chart-box {
+		width: 100%;
+	}
+	.charts-div {
+		flex-direction: column;
+	}
+}
+
+.charts-div{
+display: flex
+}
+.list-word{
+	color:red;
+	font-size:25px;
+	font-style: italic
+}
+.wrong-entry-header{
+	color: red; text-align: center
+}
+.image-display{
+	display: block; max-width: 500px; margin-left: auto;margin-right: auto; margin-top: 80px; margin-bottom: 50px; border-radius: 10px
+}
+.image-not-display{
+	display:none;
+}
+.no-cities{
+	color:gray; text-align: center
+}
