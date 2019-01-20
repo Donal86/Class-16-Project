@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { action, computed, observable, runInAction } from 'mobx';
 
+export const SUPPORTED_CURRENCIES = ['EUR', 'USD', 'GBP'];
+const CURRENCY_STORAGE_KEY = "currency";
+
 class PropertiesStore {
   @observable
   properties = {
@@ -9,7 +12,7 @@ class PropertiesStore {
     status: 'loading',
     result: null,
     fromCurrency: '',
-    toCurrency: localStorage.getItem("toCurrency"),
+    toCurrency: '',
     amount: 1,
     currencies: [],
     total: 0,
@@ -18,6 +21,35 @@ class PropertiesStore {
     step: 'form',
     details: []
   };
+
+  constructor() {
+    this.validateCurrency();
+  }
+
+  validateCurrency() {
+    let cur;
+
+    try {
+      cur = localStorage.getItem(CURRENCY_STORAGE_KEY);
+    } catch (e) { }
+
+    this.setCurrency(cur);
+  }
+
+  @action
+  setCurrency(cur = SUPPORTED_CURRENCIES[0]) {
+    try {
+      if (!SUPPORTED_CURRENCIES.includes(cur)) {
+        throw new Error('not supported currency')
+      }
+
+      this.properties.toCurrency = cur;
+      localStorage.setItem(CURRENCY_STORAGE_KEY, cur);
+      axios.defaults.headers['currency'] = cur;
+    } catch (e) {
+      this.setCurrency(SUPPORTED_CURRENCIES[0]);
+    }
+  }
 
   @action
   listProperties() {
@@ -32,22 +64,6 @@ class PropertiesStore {
         })
       })
       .catch(err => (this.properties.status = 'error'))
-  }
-
-  @action
-  listCurrencies() {
-    axios
-      .get('https://api.openrates.io/latest')
-      .then(response => {
-        const currencyAr = ['EUR'];
-        for (const key in response.data.rates) {
-          currencyAr.push(key);
-        }
-        this.properties.currencies = currencyAr.sort();
-      })
-      .catch(err => {
-        console.log('Opps', err.message);
-      });
   }
 
   houseDetails(id) {
@@ -150,8 +166,7 @@ class PropertiesStore {
   };
 
   selectHandler = event => {
-    this.properties.toCurrency = event.target.value;
-    localStorage.setItem("toCurrency", event.target.value);
+    this.setCurrency(event.target.value)
     this.listProperties();
   };
 }

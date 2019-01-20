@@ -1,6 +1,8 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 
+import { SUPPORTED_CURRENCIES } from '../store/PropertiesStore';
+
 @inject("PropertiesStore")
 @observer
 class CurrencyConverter extends React.Component {
@@ -19,7 +21,7 @@ class CurrencyConverter extends React.Component {
             onChange={event => PropertiesStore.selectHandler(event)}
             value={PropertiesStore.properties.toCurrency}
           >
-            {PropertiesStore.properties.currencies.map(currency => (
+            {SUPPORTED_CURRENCIES.map(currency => (
               <option key={currency}>{currency}</option>
             ))}
           </select>
