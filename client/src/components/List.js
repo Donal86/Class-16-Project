@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { inject, observer } from 'mobx-react';
 import React from 'react';
+import { Link } from "react-router-dom";
 
 @inject("PropertiesStore")
 @observer
@@ -207,7 +208,7 @@ class List extends React.Component {
             ) : (
                 <div className='List-main'>
                   {this.state.data.map(property => (
-                    <a className='List' key={property.id}>
+                    <Link to={`/house?id=${property.id}`} className='List' key={property.id}>
                       <div className="List-img" style={{
                         backgroundImage: property.images ? `url(${property.images.split(',')[0]})` : ''
                       }}>
@@ -228,7 +229,7 @@ class List extends React.Component {
                           {property.market_date}
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}

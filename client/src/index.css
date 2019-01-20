@@ -110,9 +110,11 @@ li.active
     display: flex;
     cursor: pointer;
     color: #555;
+    text-decoration: none;
 }
-.List:hover {
 
+.List:hover {
+    text-decoration: none;
 }
 
 .List-img {

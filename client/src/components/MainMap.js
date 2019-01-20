@@ -15,12 +15,7 @@ import { inject, observer } from 'mobx-react'
 @inject('PropertiesStore')
 @observer
 class MainMap extends React.Component {
-  constructor (props) {
-    super(props)
-    props.PropertiesStore.listProperties()
-  }
-
-  render () {
+  render() {
     // it takes all houses' properties as a json file.
     const { PropertiesStore, theHouse } = this.props
     const houses = PropertiesStore.properties.data
@@ -96,9 +91,9 @@ class MainMap extends React.Component {
       return `<div class='balloon'> <a href=${'http://localhost:3000/house?id=' +
         item.id}> <h3>${item.price_value} ${
         item.price_currency
-      }</h3> <img src=${
+        }</h3> <img src=${
         !item.images ? null : item.images.split(',')[0]
-      }/> </a> </div>`
+        }/> </a> </div>`
     }
 
     // all placemarkers are here. I created it with map function
@@ -128,7 +123,7 @@ class MainMap extends React.Component {
             zoom: zoom
           }}
           height={400}
-          width={1000}
+          width={'100%'}
         >
           {polylines}
 
