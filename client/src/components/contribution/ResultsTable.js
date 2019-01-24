@@ -1,6 +1,5 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { FaChevronLeft } from "react-icons/fa";
 import ReactJson from 'react-json-view';
 
 @inject("PropertiesStore")
@@ -10,9 +9,6 @@ class ResultsTable extends React.Component {
     limit: 2,
   };
 
-  goBack = () => {
-    this.props.PropertiesStore.changeStep('form');
-  }
   LoadMore = () => {
     this.setState({
       limit: this.state.limit + 3
@@ -70,9 +66,6 @@ class ResultsTable extends React.Component {
     );
     return (
       <div className="pages">
-        <div className="guide-link-div">
-          <button type="button" class="btn btn-dark right" onClick={() => this.goBack()}><FaChevronLeft className="icon" />Back</button>
-        </div>
         <div className="result-table">
           <h4>Results:</h4>
           {tableElements}
