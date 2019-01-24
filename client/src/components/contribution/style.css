@@ -1,3 +1,7 @@
+.page-contribute h2 {
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
 .guide-link-div {
   flex-grow: 1;
   text-align: right;
@@ -47,6 +51,7 @@ h4 {
 }
 .result-div {
   text-align: left;
+  margin-top: 20px;
   margin-left: 20px;
 }
 .red-color {
@@ -58,6 +63,9 @@ h4 {
 .icon {
   margin-right: 4px;
   vertical-align: middle;
+}
+.btn-dark {
+  background: #333333;
 }
 .right {
   float: left;

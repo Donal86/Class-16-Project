@@ -79,6 +79,7 @@ class PropertiesStore {
   @action createProperty(jsonInput) {
     this.properties.insertStatus = 'loading';
     this.properties.details = [];
+    this.properties.errorCode = 200;
     this.postProperty(jsonInput)
       .then(result => {
         runInAction(() => {
@@ -112,7 +113,7 @@ class PropertiesStore {
   @action
   listCurrencies() {
     axios
-      .get("https://api.openrates.io/latest")
+      .get('https://api.openrates.io/latest')
       .then(response => {
         const currencyAr = ['EUR'];
         for (const key in response.data.rates) {
