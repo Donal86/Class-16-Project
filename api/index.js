@@ -114,7 +114,7 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
           } else if (!rate) {
             throw new Error(`no rate for price convertion ${p.price_currency} > ${currency}`)
           } else {
-            p.price_value_converted = Number((p.price_value * rate).toFixed(2));
+            p.price_value_converted = Number((p.price_value / rate).toFixed(2));
           }
 
         });
