@@ -103,7 +103,7 @@ class MainMap extends React.Component {
         const balloonContent = function (item) {
             return `
                 <div class='balloon'>
-                    <a href="http://localhost:3000/house?id=${item.id}">
+                    <a href="/house?id=${item.id}">
                         <h3>${item.price_value} ${item.price_currency}</h3>
                         ${item.images ? `<img src="${item.images.split(',')[0]}" />` : ''}
                     </a>
