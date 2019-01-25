@@ -83,7 +83,7 @@ class CityChart extends Component {
 	}
 
 	getCitiesName = async () => {
-		return await fetch(` http://localhost:3123/api/city-name`)
+		return await fetch(`/api/city-name`)
 			.then(res => {
 				if (res.status === 404) {
 					this.setState({ noCities: true })
@@ -166,7 +166,7 @@ class CityChart extends Component {
 	};
 
 	startFetchRequest = async (city) => {
-		return await fetch(`http://localhost:3123/api/stats?city=${city}`, {})
+		return await fetch(`/api/stats?city=${city}`, {})
 			.then((res) => res.json())
 			.then((data) => data.length < 1 ? this.setState({ noData: true }) : this.updateState(data))
 			.catch((err) => console.log(err));
