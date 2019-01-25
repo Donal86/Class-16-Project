@@ -22,12 +22,11 @@ async function fetchCurrencies() {
     try {
       const response = await axios.get(url);
 
-      if (response.data.error) {
-
-      } else {
         currencyData[code] = response.data;
+        if(code === 'EUR'){
+          currencyData["EUR"].rates["EUR"] = 1;
+        }
         Object.freeze(currencyData[code])
-      }
 
     } catch (e) {
       if (e.response) {
