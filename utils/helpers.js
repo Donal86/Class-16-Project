@@ -3,11 +3,18 @@ const path = require("path");
 const fs = require("fs");
 const fetch = require("node-fetch");
 const multer = require("multer");
+const moment = require("moment");
 const db = require("../db/");
-const readyCurrencyData = require("../utils/currenciesOfToday.json");
+
+let currencyData = null;
+let currencyDataLastCheck = null;
 
 const { validation } = require("./validateProperty");
 const { normalization } = require("./normalizeProperty");
+
+(async function () {
+  await fetchCurrencies();
+})();
 
 function housesArrayProduce(houses) {
   let qurArr = [];
@@ -88,7 +95,7 @@ function getOneCityStatus(city, marketDate, houses) {
     const myDate = new Date(house.market_date);
     if (Date.parse(myDate) === Date.parse(marketDate) && house.location_city === city) {
       status.totalCount += 1;
-      price += Number(house.price_value);
+      price += convertPrice(house.price_value, house.price_currency, 'EUR');
       price = price.toFixed(2);
       price = Number(price);
       status.totalPrice = price;
@@ -134,6 +141,7 @@ function statusTable(houses) {
   const citiesStatus = getAllCitiesStatus(houses);
   citiesStatus.forEach((place, i) => {
     const { city, marketDate, totalPrice, totalCount, totalM2 } = place;
+
     qurArray[i] = [city, marketDate, totalPrice, totalCount, totalM2];
   });
   return qurArray;
@@ -275,7 +283,7 @@ function reconizeFileUpload() {
   return upload;
 }
 
-function isTheDateTodayChecker() {
+function isCurrenciesExtracted() {
   const oldDate = new Date(readyCurrencyData.date).toDateString();
   const today = new Date().toDateString();
   const datesAreSame = today === oldDate;
@@ -283,12 +291,12 @@ function isTheDateTodayChecker() {
 }
 
 async function currencyDataFetcher() {
-  if (isTheDateTodayChecker() === false) {
+  if (!isCurrenciesExtracted()) {
     await fetch("https://api.openrates.io/latest")
       .then(res => res.json())
       .then(data => {
         data["date"] = new Date().toDateString();
-        data.rates["EUR"] = 1;
+        data.rates[data.base] = 1;
         fs.writeFile(
           "./utils/currenciesOfToday.json",
           JSON.stringify(data),
@@ -329,6 +337,38 @@ async function createNewDataWithnewCurrencies(result, currency) {
   return validatedData;
 }
 
+async function fetchCurrencies() {
+  const today = moment().format('DD-MM-YYYY');
+  console.log('last check', currencyDataLastCheck, today);
+  if (!currencyDataLastCheck || currencyDataLastCheck !== today) {
+    await fetch("https://api.openrates.io/latest")
+      .then(res => res.json())
+      .then(data => {
+        data["date"] = new Date().toDateString();
+        data.rates[data.base] = 1;
+
+        currencyDataLastCheck = today;
+        currencyData = data;
+      })
+      .catch(err => {
+        throw err;
+      });
+  }
+}
+
+function convertPrice(value = null, from, to) {
+  const rateFrom = currencyData.rates[from];
+  const rateTo = currencyData.rates[to];
+
+  if (!value || !rateFrom || !rateTo) {
+    throw new Error(`Could not convert price - value: ${value}, from: ${from}, to: ${to}`);
+  }
+
+  const converted = (value / rateFrom) * rateTo;
+
+  return converted;
+}
+
 module.exports = {
   housesArrayProduce,
   insertIntoDatabase,
@@ -339,5 +379,6 @@ module.exports = {
   isEmptyObject,
   handleResultsOfPromises,
   reconizeFileUpload,
-  createNewDataWithnewCurrencies
+  createNewDataWithnewCurrencies,
+  convertPrice
 };

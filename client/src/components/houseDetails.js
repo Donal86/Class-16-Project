@@ -22,7 +22,7 @@ import { inject, observer } from 'mobx-react'
 @inject('PropertiesStore')
 @observer
 class HouseDetails extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.props.PropertiesStore.houseDetails(
       queryString.parse(this.props.location.search).id
@@ -35,7 +35,7 @@ class HouseDetails extends Component {
     }
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     const { PropertiesStore } = this.props
     await PropertiesStore.houseDetails(
       queryString.parse(this.props.location.search).id
@@ -121,11 +121,13 @@ class HouseDetails extends Component {
     return output
   }
 
-  render () {
+  render() {
     const { PropertiesStore } = this.props
     const myHouse = PropertiesStore.properties.singleHouse
     const houseArr = toJS(myHouse)
     const houseObj = { ...houseArr[0] }
+
+    const cur = this.props.PropertiesStore.properties.toCurrency;
 
     const {
       id,
@@ -166,10 +168,10 @@ class HouseDetails extends Component {
       )
     })
     return !link ? (
-        <div className='notFound'>
-            <div>
-        House No. {queryString.parse(this.props.location.search).id + ' '}is not
-        found
+      <div className='notFound'>
+        <div>
+          House No. {queryString.parse(this.props.location.search).id + ' '}is not
+          found
         </div>
         <img
           className='notFoundImg'
@@ -179,116 +181,126 @@ class HouseDetails extends Component {
         <h2 className="notFoundHeader">House Is Not Found</h2>
       </div>
     ) : (
-      <div className='single-house-container'>
-        {this.modalShowOneImage()}
-        <Carousel
-          activeIndex={activeIndex}
-          next={this.next}
-          previous={this.previous}
-        >
-          <CarouselIndicators
-            items={imgItems}
+        <div className='single-house-container'>
+          {this.modalShowOneImage()}
+          <Carousel
             activeIndex={activeIndex}
-            onClickHandler={this.goToIndex}
-          />
-          {slides}
-          <CarouselControl
-            direction='prev'
-            directionText='Previous'
-            onClickHandler={this.previous}
-          />
-          <CarouselControl
-            direction='next'
-            directionText='Next'
-            onClickHandler={this.next}
-          />
-        </Carousel>
-        <hr />
-        <h2>{title}</h2>
-        <Row>
-          <Col sm='6' md='4'>
-            <Card body>
-              <CardTitle>Country</CardTitle>
-              <CardText>{location_country}</CardText>
-            </Card>
-          </Col>
-          <Col sm='6' md='4'>
-            <Card body>
-              <CardTitle>City</CardTitle>
-              <CardText>{location_city}</CardText>
-            </Card>
-          </Col>
-          <Col sm='6' md='4'>
-            <Card body>
-              <CardTitle>Address</CardTitle>
-              <CardText>{location_address}</CardText>
-            </Card>
-          </Col>
-          <Col sm='6' md='4'>
-            <Card body>
-              <CardTitle>Price</CardTitle>
-              <CardText>{priceValue + ' ' + price_currency}</CardText>
-            </Card>
-          </Col>
-          <Col sm='6' md='4'>
-            <Card body>
-              <CardTitle>Rooms</CardTitle>
-              <CardText>{size_rooms}</CardText>
-            </Card>
-          </Col>
-          {!size_grossm2 ? null : (
+            next={this.next}
+            previous={this.previous}
+          >
+            <CarouselIndicators
+              items={imgItems}
+              activeIndex={activeIndex}
+              onClickHandler={this.goToIndex}
+            />
+            {slides}
+            <CarouselControl
+              direction='prev'
+              directionText='Previous'
+              onClickHandler={this.previous}
+            />
+            <CarouselControl
+              direction='next'
+              directionText='Next'
+              onClickHandler={this.next}
+            />
+          </Carousel>
+          <hr />
+          <h2>{title}</h2>
+          <Row>
             <Col sm='6' md='4'>
               <Card body>
-                <CardTitle>Gross Size</CardTitle>
-                <CardText>{size_grossm2 + ' m2'}</CardText>
+                <CardTitle>Country</CardTitle>
+                <CardText>{location_country}</CardText>
               </Card>
             </Col>
-          )}
-          {!size_parcelm2 ? null : (
             <Col sm='6' md='4'>
               <Card body>
-                <CardTitle>Parcel Size</CardTitle>
-                <CardText>{size_parcelm2 + ' m2'}</CardText>
+                <CardTitle>City</CardTitle>
+                <CardText>{location_city}</CardText>
               </Card>
             </Col>
-          )}
-          {!size_netm2 ? null : (
             <Col sm='6' md='4'>
               <Card body>
-                <CardTitle>Net Size</CardTitle>
-                <CardText>{size_netm2 + ' m2'}</CardText>
+                <CardTitle>Address</CardTitle>
+                <CardText>{location_address}</CardText>
               </Card>
             </Col>
-          )}
-          <Col sm='6' md='4'>
-            <Card body>
-              <CardTitle>Market Date</CardTitle>
-              <CardText>{marketDate}</CardText>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col md='10'>
-            <Card body>
-              <CardTitle>Link</CardTitle>
-              <CardText>
-                <a href={link}>{link}</a>
-              </CardText>
-            </Card>
-          </Col>
-        </Row>
-        <Row className='justify-content-center'>
-          <Col md='10'>
-            <Card body>
-              <CardTitle>Description</CardTitle>
-              <CardText>{description}</CardText>
-            </Card>
-          </Col>
-        </Row>
+            <Col sm='6' md='4'>
+              <Card body>
+                <CardTitle>Price</CardTitle>
+                <CardText>
+                  {houseObj.price_value.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: houseObj.price_currency,
+                  })}
 
-        <div className='mapContainer'>{myMap}</div>
-      </div>
-    )
+                </CardText>
+                <CardText>{houseObj.price_value_converted.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: cur,
+                })}</CardText>
+              </Card>
+            </Col>
+            <Col sm='6' md='4'>
+              <Card body>
+                <CardTitle>Rooms</CardTitle>
+                <CardText>{size_rooms}</CardText>
+              </Card>
+            </Col>
+            {!size_grossm2 ? null : (
+              <Col sm='6' md='4'>
+                <Card body>
+                  <CardTitle>Gross Size</CardTitle>
+                  <CardText>{size_grossm2 + ' m2'}</CardText>
+                </Card>
+              </Col>
+            )}
+            {!size_parcelm2 ? null : (
+              <Col sm='6' md='4'>
+                <Card body>
+                  <CardTitle>Parcel Size</CardTitle>
+                  <CardText>{size_parcelm2 + ' m2'}</CardText>
+                </Card>
+              </Col>
+            )}
+            {!size_netm2 ? null : (
+              <Col sm='6' md='4'>
+                <Card body>
+                  <CardTitle>Net Size</CardTitle>
+                  <CardText>{size_netm2 + ' m2'}</CardText>
+                </Card>
+              </Col>
+            )}
+            <Col sm='6' md='4'>
+              <Card body>
+                <CardTitle>Market Date</CardTitle>
+                <CardText>{marketDate}</CardText>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col md='10'>
+              <Card body>
+                <CardTitle>Link</CardTitle>
+                <CardText>
+                  <a href={link}>{link}</a>
+                </CardText>
+              </Card>
+            </Col>
+          </Row>
+          <Row className='justify-content-center'>
+            <Col md='10'>
+              <Card body>
+                <CardTitle>Description</CardTitle>
+                <CardText>{description}</CardText>
+              </Card>
+            </Col>
+          </Row>
+
+          <div className='mapContainer'>{myMap}</div>
+        </div>
+      )
   }
 }
 
