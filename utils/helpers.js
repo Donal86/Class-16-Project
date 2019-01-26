@@ -361,7 +361,7 @@ function convertPrice(value = null, from, to) {
   const rateTo = currencyData.rates[to];
 
   if (!value || !rateFrom || !rateTo) {
-    throw new Error(`Could not convert price - value: ${value}, from: ${from}, to: ${to}`);
+    // throw new Error(`Could not convert price - value: ${value}, from: ${from}, to: ${to}`);
   }
 
   const converted = (value / rateFrom) * rateTo;

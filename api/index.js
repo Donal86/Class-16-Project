@@ -51,6 +51,7 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
   }
   try {
     let dataQuery = `select * from property`;
+    console.log(dataQuery)
     let totalQuery = `select count(id) as total from property`;
     let conditions = [];
     let conditionParams = [];
@@ -82,6 +83,10 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
 
     if (rooms) {
       conditions.push(`size_rooms >= ?`);
+      conditionParams.push(rooms);
+    } 
+     if (rooms == 1) {
+      conditions.push(`size_rooms = ?`);
       conditionParams.push(rooms);
     }
 
@@ -123,9 +128,11 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
       data = data.slice(offset, offset + ITEMS_PER_PAGE);
     }
 
-    let countryCity = await db.queryPromise('select distinct location_city, location_country from property')
+    let country = await db.queryPromise('select distinct location_country from property');
+    let city = await db.queryPromise('select distinct location_city from property');
 
-    return res.json({ data, total, countryCity });
+
+    return res.json({ data, total, country, city });
   } catch (err) {
     return next(err)
   }
@@ -193,6 +200,7 @@ router.post(
           break
         case 'json':
           data = JSON.parse(json);
+          console.log(data)
           break;
         case 'file':
           const xx = req.file.path

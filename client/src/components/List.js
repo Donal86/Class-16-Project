@@ -34,7 +34,8 @@ class List extends React.Component {
   state = {
     data: [],
     total: 0,
-    countryCity: []
+    country: [],
+    city: []
   };
 
   parseParamsFromUrl = () => {
@@ -44,7 +45,7 @@ class List extends React.Component {
       price_min: 0,
       price_max: 100000000,
       order: 'market_date_asc',
-      rooms: 1,
+      rooms: 0,
       city: '',
       country: ''
     };
@@ -98,7 +99,7 @@ class List extends React.Component {
                     this.handleChange('country', e.target.value);
                   }}>
                   <option value=''>select country</option>
-                  {this.state.countryCity
+                  {this.state.country
                     .sort((a, b) => {
                       if (a.location_country > b.location_country) {
                         return 1;
@@ -124,7 +125,7 @@ class List extends React.Component {
                     this.handleChange('city', e.target.value);
                   }}>
                   <option value=''>select city</option>
-                  {this.state.countryCity
+                  {this.state.city
                     .sort((a, b) => {
                       if (a.location_city > b.location_city) {
                         return 1;
@@ -171,7 +172,7 @@ class List extends React.Component {
                       className="custom-control-input"
                     />
                     <label htmlFor="rooms1" className="custom-control-label">
-                      1+
+                      1
                     </label>
                   </div>
 
