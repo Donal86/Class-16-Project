@@ -3,19 +3,19 @@ const cors = require('cors');
 const fs = require('fs');
 const moment = require('moment');
 
+
 const {
   readJsonFile,
   fetchJsonURL,
   handleResultsOfPromises,
   reconizeFileUpload,
-  createNewDataWithnewCurrencies
+  createNewDataWithnewCurrencies,
+  convertPrice
 } = require('../utils/helpers');
 
 const { getCurrencyData } = require('../utils/currencies');
 
 const db = require('../db/')
-
-
 
 router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, res, next) => {
   const currencyData = getCurrencyData();
@@ -29,11 +29,7 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
     map = 0
   } = query;
 
-  let currency = query.currency || headers.currency;
-
-  if (!currencyData[currency]) {
-    currency = Object.keys(currencyData)[0]
-  }
+  let currency = query.currency || headers.currency || 'EUR';
 
   const ITEMS_PER_PAGE = 20;
   const offset = (page - 1) * ITEMS_PER_PAGE;
@@ -105,19 +101,10 @@ router.get('/properties/:pampams?', cors(), async ({ query, params, headers }, r
     let dataResult = await db.queryPromise(dataQuery, conditionParams);
 
     try {
-      dataResult
-        .forEach(p => {
-          const rate = currencyData[currency].rates[p.price_currency];
-
-          if (p.price_currency === currency) {
-            p.price_value_converted = p.price_value;
-          } else if (!rate) {
-            throw new Error(`no rate for price convertion ${p.price_currency} > ${currency}`)
-          } else {
-            p.price_value_converted = Number((p.price_value / rate).toFixed(2));
-          }
-
-        });
+      for (const h of dataResult) {
+        const converted = convertPrice(h.price_value, h.price_currency, currency)
+        h.price_value_converted = converted;
+      }
     } catch (e) {
       return next(e);
     }
@@ -160,12 +147,13 @@ router.get('/city-name', cors(), async (req, res, next) => {
 router.get('/stats', cors(), async (req, res, next) => {
   try {
     const city = req.query.city || null;
+    let currency = req.query.currency || req.headers.currency || 'EUR';
 
     const sql = `
       SELECT 
         *, 
-        format(sum(total_price)/sum(total_count),0) AS averagePrice, 
-        format(sum(total_price)/sum(total_m2),0) AS avgSqr 
+        sum(total_price) / sum(total_count) AS averagePrice, 
+        sum(total_price ) /sum(total_m2) AS avgSqr 
       FROM city_status 
       WHERE 
         market_date >= ? and market_date <= ?
@@ -177,6 +165,11 @@ router.get('/stats', cors(), async (req, res, next) => {
     const d2 = moment().format('YYYY-MM-DD');
 
     const result = await db.queryPromise(sql, [d1, d2, city]);
+
+    for (const stat of result) {
+      const converted = convertPrice(stat.averagePrice, 'EUR', currency)
+      stat.price_value_converted = converted;
+    }
 
     res.json(result)
 
@@ -235,13 +228,22 @@ router.post(
   }
 )
 
-router.get('/house', cors(), async (req, res, next) => {
+router.get('/house', cors(), async ({ query, headers }, res, next) => {
   try {
-    const { id } = req.query
+    const { id } = query;
+
+    let currency = query.currency || headers.currency || 'EUR';
+
     const result = await db.queryPromise(
       `SELECT * FROM property WHERE id = ?`,
       [id]
     )
+
+    for (const h of result) {
+      const converted = convertPrice(h.price_value, h.price_currency, currency)
+      h.price_value_converted = converted;
+    }
+
     if (result.length < 1) {
       res.json({ message: 'wrong house id' })
     } else return res.json(result)

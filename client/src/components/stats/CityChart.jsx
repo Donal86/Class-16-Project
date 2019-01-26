@@ -4,10 +4,12 @@ import DrawChart from './DrawChart';
 import queryString from 'query-string';
 import './chart.css';
 import moment from 'moment';
+import { inject } from 'mobx-react';
 moment().format();
 
 const CHART_RANGE = 20;
 
+@inject('PropertiesStore')
 class CityChart extends Component {
 	state = {
 		sqrmChartData: {
@@ -115,14 +117,17 @@ class CityChart extends Component {
 	};
 
 	updateState = (sourceData) => {
+
+		const cur = this.props.PropertiesStore.properties.toCurrency;
+
 		const allAveragesArray = [];
 		const avgPriceSqrArray = [];
 		const avgPriceDataArray = [];
 		const averagesObjByDate = sourceData.map((entry) => {
 			const { avgSqr, market_date, averagePrice } = entry;
 			const date = moment(market_date);
-			const avgSqrNum = parseFloat(avgSqr.replace(/,/g, ''));
-			const avgPriceNum = parseFloat(averagePrice.replace(/,/g, ''));
+			const avgSqrNum = avgSqr;
+			const avgPriceNum = averagePrice;
 			return { avgPriceNum, avgSqrNum, date };
 		});
 		allAveragesArray.push(averagesObjByDate);
@@ -157,10 +162,10 @@ class CityChart extends Component {
 		const { sqrmChartData, priceChartData } = this.state;
 		this.setState({
 			sqrmChartData: {
-				...sqrmChartData, labels: daysNewFormat, datasets: [{ ...sqrmChartData.datasets[0], label: 'M² price', data: avgPriceSqrArray }]
+				...sqrmChartData, labels: daysNewFormat, datasets: [{ ...sqrmChartData.datasets[0], label: `M² price (${cur})`, data: avgPriceSqrArray }]
 			},
 			priceChartData: {
-				...priceChartData, labels: daysNewFormat, datasets: [{ ...priceChartData.datasets[0], label: 'Property price', data: avgPriceDataArray }]
+				...priceChartData, labels: daysNewFormat, datasets: [{ ...priceChartData.datasets[0], label: `Property price (${cur})`, data: avgPriceDataArray }]
 			}
 		});
 	};

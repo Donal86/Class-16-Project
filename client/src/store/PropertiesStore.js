@@ -67,9 +67,9 @@ class PropertiesStore {
   houseDetails(id) {
     this.properties.status = 'loading'
     this.getSingleHouse(id)
-      .then(house => {
+      .then(res => {
         runInAction(() => {
-          this.properties.singleHouse = house.length < 1 ? null : house
+          this.properties.singleHouse = res.data.length < 1 ? null : res.data
           this.properties.status = 'done'
         })
       })
@@ -142,8 +142,7 @@ class PropertiesStore {
   }
 
   getSingleHouse(id) {
-    return fetch(`api/house?id=${id}`)
-      .then(response => response.json())
+    return axios.get(`/api/house?id=${id}`)
       .catch(err => console.log('line 70 store', err))
   }
 

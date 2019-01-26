@@ -40,6 +40,8 @@ class MainMap extends React.Component {
 
         if (this.state.loading) return <div>loading...</div>
 
+        const cur = this.props.PropertiesStore.properties.toCurrency;
+
         //it takes all houses' properties as a json file.
         const { theHouse } = this.props;
         const houses = this.state.data;
@@ -104,7 +106,12 @@ class MainMap extends React.Component {
             return `
                 <div class='balloon'>
                     <a href="/house?id=${item.id}">
-                        <h3>${item.price_value} ${item.price_currency}</h3>
+                        <h3>
+                            ${item.price_value_converted.toLocaleString('en-US', {
+                style: 'currency',
+                currency: cur,
+            })}
+                        </h3>
                         ${item.images ? `<img src="${item.images.split(',')[0]}" />` : ''}
                     </a>
                 </div>
